@@ -2,7 +2,7 @@
 
 Build buy and sell transactions for PONS Robinhood Chain with keys kept inside your bot. The API checks the token's current stage, simulates the trade, and sets a minimum net output. Independent integration; not an official launchpad product.
 
-**0.2.0-beta: source and hosted documentation published; funded trading is pending.** The settlement contract has not been deployed. Market inspection works before setup. Quote/trade/approval endpoints return `SETUP_REQUIRED` until the operator deploys and configures the reviewed contract. No fees are being collected by this new service yet. This is separate from RapidAPI and the Pump API.
+**0.2.0-beta: source and hosted documentation published; funded trading is pending.** The settlement contract has not been deployed. Market inspection is implemented, but hosted reads currently return 503 because public RPC providers throttle Worker traffic. Configure a dedicated Robinhood Chain EVM_RPC_URL before launch; local public-RPC checks have succeeded. Quote/trade/approval endpoints return `SETUP_REQUIRED` until the operator deploys and configures the reviewed contract. No fees are being collected by this new service yet. This is separate from RapidAPI and the Pump API.
 
 [Hosted docs](https://pons-robinhood-trade.apilabph.workers.dev) · [OpenAPI](openapi.json) · [Release status](docs/RELEASE.md)
 
@@ -28,7 +28,7 @@ The wallet must have funds for the trade **and gas**. Buy amounts are decimal ET
 
 If a sell returns `APPROVAL_REQUIRED`, send the same body to `/api/approval`, inspect and sign that exact approval locally, wait for its receipt, then rebuild. A nonzero insufficient allowance is reset to zero first. Unlimited approvals are never requested.
 
-The response contains an unsigned transaction, simulated output, fee, refund, stage, block snapshot and deadline. Your bot checks these, signs locally and submits through its own RPC. The API never signs, sends transactions or retries a failed trade automatically. See [local bot integration](examples/bot.mjs).
+The response contains an unsigned transaction, simulated output, fee, refund, stage, block snapshot and deadline. Your bot checks these, signs locally and submits through its own RPC. The API never signs, sends transactions or retries a failed trade automatically. See [local bot integration](examples/bot.mjs): prepareTrade returns a transaction for your review; executeTrade uses your already configured local wallet client, checks your strategy minimum, submits once and waits for a receipt. It never asks the API to sign. If submission status is uncertain, inspect the transaction/nonce before retrying.
 
 ## Supported markets
 

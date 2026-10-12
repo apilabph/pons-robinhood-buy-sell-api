@@ -103,6 +103,9 @@ export async function handle(request, env = {}, context = {}) {
           version: config.version,
           chainId: config.chainId,
           marketInspection: true,
+          rpcReadiness: env.EVM_RPC_URL
+            ? "configured-needs-verification"
+            : "public-provider-rate-limited",
           settlementConfigured: Boolean(env.SETTLEMENT_ROUTER),
           runtimeVerification: "required per build",
           tradingStatus: env.SETTLEMENT_ROUTER

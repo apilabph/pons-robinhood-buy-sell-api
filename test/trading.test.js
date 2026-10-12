@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   encodeFunctionResult,
+  encodeFunctionData,
   decodeFunctionData,
   parseAbi,
   toHex,
@@ -220,4 +221,102 @@ test("RPC client blocks broadcasts, redirects and mismatched IDs without leaking
     () => redirect("eth_chainId"),
     (e) => e.code === "RPC_HTTP",
   );
+});
+
+import { prepareTrade, executeTrade } from "../examples/bot.mjs";
+test("local bot rejects modified fee calldata and enforces its own price before signing", async () => {
+  const good = await build(
+    fixture().rpc,
+    { SETTLEMENT_ROUTER: router },
+    request,
+  );
+  const original = globalThis.fetch;
+  let reply = good,
+    submitted = 0;
+  globalThis.fetch = async (url, options) => {
+    if (String(url.url ?? url).startsWith("https://rpc.invalid")) {
+      const body = JSON.parse(options?.body ?? (await url.clone().text()));
+      let result;
+      if (body.method === "eth_chainId") result = toHex(config.chainId);
+      else if (body.method === "eth_getCode") result = artifact.runtimeBytecode;
+      else if (body.method === "eth_call") {
+        const d = decodeFunctionData({
+          abi: artifact.abi,
+          data: body.params[0].data,
+        });
+        const value =
+          d.functionName === "FEE_BPS"
+            ? 25n
+            : d.functionName === "CHAIN_ID"
+              ? BigInt(config.chainId)
+              : config.fee;
+        result = encodeFunctionResult({
+          abi: artifact.abi,
+          functionName: d.functionName,
+          result: value,
+        });
+      } else throw new Error("Unexpected local verification method");
+      return Response.json({ jsonrpc: "2.0", id: body.id, result });
+    }
+    return Response.json(reply);
+  };
+  try {
+    const args = {
+      rpcUrl: "https://rpc.invalid",
+      expectedRouter: router,
+      ...request,
+    };
+    assert.equal((await prepareTrade(args)).transaction.to, router);
+    const d = decodeFunctionData({
+      abi: artifact.abi,
+      data: good.transaction.data,
+    });
+    d.args[3] = 26n;
+    reply = {
+      ...good,
+      transaction: {
+        ...good.transaction,
+        data: encodeFunctionData({
+          abi: artifact.abi,
+          functionName: "buy",
+          args: d.args,
+        }),
+      },
+    };
+    await assert.rejects(() => prepareTrade(args), /Amount\/fee mismatch/);
+    reply = good;
+    const walletClient = {
+      account: { address: wallet },
+      chain: { id: config.chainId },
+      sendTransaction: async () => {
+        submitted++;
+        return "0x" + "ab".repeat(32);
+      },
+    };
+    const publicClient = {
+      getChainId: async () => config.chainId,
+      waitForTransactionReceipt: async () => ({ status: "success" }),
+    };
+    await assert.rejects(
+      () =>
+        executeTrade({
+          ...args,
+          walletClient,
+          publicClient,
+          minimumAcceptableOut: 1000001n,
+        }),
+      /acceptable price/,
+    );
+    assert.equal(submitted, 0);
+    const result = await executeTrade({
+      ...args,
+      walletClient,
+      publicClient,
+      minimumAcceptableOut: 990000n,
+    });
+    assert.equal(result.receipt.status, "success");
+    assert.equal(submitted, 1);
+  } finally {
+    globalThis.fetch = original;
+  }
 });

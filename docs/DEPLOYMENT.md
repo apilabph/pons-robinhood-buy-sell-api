@@ -10,3 +10,5 @@
 No contract deployment, token approval or live trade was executed during development. Public documentation hosting is separate from on-chain readiness. If protocol identities or fee recipients change, recompile, review, test, deploy a new contract and explicitly configure it; this contract is not upgradeable.
 
 Never send funds directly to the settlement address. It has no administrative withdrawal method. The service receives fees only from successful trades through the reviewed router.
+
+Current hosting prerequisite: configure a dedicated Robinhood Chain EVM_RPC_URL secret. Both the official shared endpoint and PublicNode returned HTTP errors from the Worker. Local reads and state-overlay simulations succeeded, but those do not establish hosted availability. No new provider account or paid subscription has been created. Helius endpoints configured for the Solana services cannot serve this EVM chain.

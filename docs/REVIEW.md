@@ -1,6 +1,6 @@
 # Internal code review
 
-October 13, 2026. Source, settlement contract, HTTP/RPC boundary, local examples, documentation and reproducible artifacts reviewed. This is an internal engineering review, not an independent smart-contract audit.
+October 13, 2026. Source, settlement contract, HTTP/RPC boundary, local examples, documentation and reproducible artifacts reviewed. A mocked local-client execution test rejects altered fee calldata and stops a quote below the bot?s own price limit before signing. This is an internal engineering review, not an independent smart-contract audit.
 
 ## Findings fixed
 
@@ -14,7 +14,7 @@ October 13, 2026. Source, settlement contract, HTTP/RPC boundary, local examples
 
 ## Verification and limits
 
-42 automated tests passed locally, including EVM bytecode execution for fee/refund atomicity, rejected token transfers, reentrancy, failure rollback, wrong chain and allowance cleanup. API tests exercise each declared stage and direction using fixtures, plus deployment mismatches, stage races, block changes and HTTP/RPC failures. Existing PONS inspector tests remain in place. These mocks are not proof of protocol coverage.
+43 automated tests passed locally, including EVM bytecode execution for fee/refund atomicity, rejected token transfers, reentrancy, failure rollback, wrong chain and allowance cleanup. API tests exercise each declared stage and direction using fixtures, plus deployment mismatches, stage races, block changes and HTTP/RPC failures. Existing PONS inspector tests remain in place. These mocks are not proof of protocol coverage.
 
 Read-only mainnet state-overlay round trips passed for: v2-bonding-curve, v1-uniswap-v3. Only our undeployed router/probe code and synthetic caller funding were overlaid; protocol storage was not changed. The evidence records exact hashes, blocks and measured outputs. No real funds, signatures or broadcasts were used.
 

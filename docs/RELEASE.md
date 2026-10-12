@@ -1,8 +1,8 @@
 # 0.2.0-beta release
 
-October 13, 2026. Public source/host publication verification is pending below; on-chain settlement deployment and funded trades have not happened.
+October 13, 2026. Public GitHub source and Worker documentation are published. On-chain settlement deployment and funded trades have not happened.
 
-- Tests: 42 passed locally. Solidity compiled with pinned solc 0.8.37, Paris target and optimizer/viaIR settings recorded in the artifact.
+- Tests: 43 passed locally. Solidity compiled with pinned solc 0.8.37, Paris target and optimizer/viaIR settings recorded in the artifact.
 - Reproducible runtime hash: `0xa53172f51790287e1388277acd450ad736468e0b34acc7bfbb31f21f185381bd`.
 - Audit: zero vulnerabilities in the installed package tree.
 - Mainnet state-overlay evidence: [v2-bonding-curve](evidence/overlay-0-roundtrip.json), [v1-uniswap-v3](evidence/overlay-1-roundtrip.json). These are read-only simulations with synthetic code/funding, not real deployments or trades.
@@ -11,3 +11,5 @@ October 13, 2026. Public source/host publication verification is pending below; 
 This beta is not earning fees yet. Quote/trade/approval return SETUP_REQUIRED until the operator configures a bytecode-verified deployed settlement contract. Read [setup](DEPLOYMENT.md), [review](REVIEW.md) and [research](RESEARCH.md).
 
 Read-only observations may become stale as tokens migrate. Re-run `node scripts/verify-overlay.mjs TOKEN_ADDRESS` to test a round trip against current chain state. The script's probe is never broadcast. A provider must support eth_call state overrides. Measurements in evidence are single RPC samples, not complete hosted build times or confirmation benchmarks.
+
+Hosted verification: [evidence](evidence/hosted-publication.json). Worker ce5c5585-7807-4ea9-9ab2-a54067c71ab0. Documentation, health, capabilities, deployment metadata, OpenAPI, robots and sitemap returned 200. All three trading endpoints correctly returned SETUP_REQUIRED. Hosted market inspection returned 503 RPC_HTTP; a dedicated Robinhood Chain RPC remains required. Local protocol simulations do not establish hosted readiness.

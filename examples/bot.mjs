@@ -75,3 +75,45 @@ export async function prepareTrade({
 // Next: compare minimumOut with your bot's own acceptable price, inspect the quote,
 // then use your existing local wallet client to sign/send transaction.
 // Do not trust an API-provided minimum as your entire trading strategy.
+
+// Optional local execution helper. Calling this spends funds; nothing runs on import.
+export async function executeTrade({
+  walletClient,
+  publicClient,
+  expectedRouter,
+  rpcUrl,
+  token,
+  action,
+  amount,
+  minimumAcceptableOut,
+  slippageBps = 100,
+}) {
+  if (
+    !walletClient.account ||
+    walletClient.chain?.id !== config.chainId ||
+    (await publicClient.getChainId()) !== config.chainId
+  )
+    throw new Error(
+      "Configure your local wallet and public clients for the expected chain",
+    );
+  if (typeof minimumAcceptableOut !== "bigint" || minimumAcceptableOut <= 0n)
+    throw new Error("Provide your strategy minimum in raw output units");
+  const prepared = await prepareTrade({
+    rpcUrl,
+    expectedRouter,
+    publicKey: walletClient.account.address,
+    token,
+    action,
+    amount,
+    slippageBps,
+  });
+  if (BigInt(prepared.quote.minimumOut) < minimumAcceptableOut)
+    throw new Error("Quote is below your own acceptable price");
+  const hash = await walletClient.sendTransaction(prepared.transaction);
+  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  if (receipt.status !== "success")
+    throw Object.assign(new Error("Trade reverted; do not blindly resend"), {
+      hash,
+    });
+  return { hash, receipt, quote: prepared.quote };
+}

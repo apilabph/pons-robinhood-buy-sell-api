@@ -1,0 +1,59 @@
+{
+  "verifiedAt": "2026-10-12T21:09:59.471Z",
+  "baseUrl": "https://pons-robinhood-trade.apilabph.workers.dev",
+  "workerVersion": "ce5c5585-7807-4ea9-9ab2-a54067c71ab0",
+  "checks": [
+    {
+      "path": "/",
+      "httpStatus": 200
+    },
+    {
+      "path": "/api/health",
+      "httpStatus": 200
+    },
+    {
+      "path": "/api/capabilities",
+      "httpStatus": 200
+    },
+    {
+      "path": "/api/deployment",
+      "httpStatus": 200
+    },
+    {
+      "path": "/openapi.json",
+      "httpStatus": 200
+    },
+    {
+      "path": "/robots.txt",
+      "httpStatus": 200
+    },
+    {
+      "path": "/sitemap.xml",
+      "httpStatus": 200
+    },
+    {
+      "path": "/api/trade",
+      "httpStatus": 503,
+      "code": "SETUP_REQUIRED"
+    },
+    {
+      "path": "/api/quote",
+      "httpStatus": 503,
+      "code": "SETUP_REQUIRED"
+    },
+    {
+      "path": "/api/approval",
+      "httpStatus": 503,
+      "code": "SETUP_REQUIRED"
+    },
+    {
+      "path": "/api/market",
+      "httpStatus": 503,
+      "token": "0x39dbed3a2bd333467115de45665cc57f813c4571",
+      "code": "RPC_HTTP",
+      "roundTripMs": 450
+    }
+  ],
+  "onChainSettlementDeployed": false,
+  "fundedLiveTrades": false
+}

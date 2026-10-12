@@ -5,12 +5,8 @@
   "chainId": 4663,
   "native": "ETH",
   "fee": "0x6A17d358ae138A726b4dda7A95C104440AAdb2DB",
-  "rpc": "https://rpc.mainnet.chain.robinhood.com",
-  "stages": [
-    "v2-bonding-curve",
-    "v1-uniswap-v3",
-    "v2-uniswap-v4"
-  ],
+  "rpc": "https://robinhood-rpc.publicnode.com",
+  "stages": ["v2-bonding-curve", "v1-uniswap-v3", "v2-uniswap-v4"],
   "id": 13,
   "version": "0.2.0-beta"
 }

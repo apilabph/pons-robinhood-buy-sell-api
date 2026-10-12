@@ -36,3 +36,5 @@ The upstream repository at commit `97199b7a06a314654ea124593f52c1a530b7f03f` des
 - Establish RPC/hosting capacity, publish accurate documentation and confirm a useful developer integration. A public deployment and earning claim are premature today.
 
 The first implementation reads and validates market identity/stage. It deliberately returns no transaction bytes, approvals, signatures or claim that a market is safe to buy.
+
+Hosted-readback update: the official shared Robinhood RPC rejected Worker reads; PublicNode allowed chain/header reads but returned HTTP 429 on contract calls, including paced requests. Keep the public builder gated pending a dedicated provider. See [official provider options](https://docs.robinhood.com/chain/connecting/) and [PublicNode](https://robinhood.publicnode.com/). No automatic paid account or retry loop was enabled.
