@@ -1,3 +1,7 @@
+# Research record and implementation update
+
+The original feasibility notes below describe the earlier read-only milestone. As of 0.2.0-beta, native trading source, atomic settlement, unsigned builders, approvals and local bot examples are implemented. V1 and V2 curve state-overlay round trips passed. On-chain deployment, funded verification and V2 V4 mainnet coverage remain pending; see RELEASE.md and REVIEW.md. Quotes execute the current protocol through eth_call rather than assuming a fixed tax duration or reimplementing stale reserve math.
+
 # PONS feasibility - October 13, 2026
 
 The owner selected Robinhood Chain/PONS as the next separate integration, using local bot signing and a fee-earning model similar to Pump. This authorizes a focused prototype; public research has not established paying customers for our version. No third parties were contacted and no paid service was purchased.

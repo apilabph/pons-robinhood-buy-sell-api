@@ -1,6 +1,6 @@
-# Market inspection API
+# Legacy local inspector API
 
-Local development base URL: `http://127.0.0.1:8788`. All amounts/block numbers that may exceed JavaScript's safe integer range are strings. There is no public deployment or API-key enrollment.
+Local development base URL: `http://127.0.0.1:8788`. All amounts/block numbers that may exceed JavaScript's safe integer range are strings. This page documents the retained loopback inspector. The new public Worker uses /api routes; see ../openapi.json and README.md for those endpoints and settlement setup status.
 
 | Method and path | Request | Result |
 | --- | --- | --- |

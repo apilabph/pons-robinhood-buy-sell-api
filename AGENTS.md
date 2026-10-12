@@ -8,3 +8,5 @@
 - Read dynamic taxes from validated deployed contracts; do not copy a competitor's fixed tax duration or omit unknown fees. Reconcile upstream source/ABI/deployment versions before releasing transactions.
 - No paid infrastructure, live transactions, token launch or deployment is authorized by this repository. Read-only public-chain calls and offline tests are permitted.
 - Keep the repository private while developing the unverified adapter. No marketplace or public execution deployment exists yet.
+
+The owner subsequently authorized completing development and public GitHub/Worker publication on October 13, 2026. This supersedes the private-development milestone restriction above. Funded contract deployment and live trades are still deferred until the owner funds and tests the wallets.

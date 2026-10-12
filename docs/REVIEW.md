@@ -1,25 +1,21 @@
-# Inspector review - October 13, 2026
+# Internal code review
 
-Scope: development-only market inspection. This review does not certify any trading, fee collection or deployed V2 implementation.
+October 13, 2026. Source, settlement contract, HTTP/RPC boundary, local examples, documentation and reproducible artifacts reviewed. This is an internal engineering review, not an independent smart-contract audit.
 
 ## Findings fixed
 
-- Address normalization by itself is not a checksum check. The request validator now rejects an invalid mixed-case checksum before RPC access; covered by a negative test.
-- Breaking an HTTP body iterator on an oversized request can destroy the connection before the 413 response. The bounded reader now avoids destroying the stream on iterator exit, drains/closes rejected requests and passes an HTTP oversize test.
-- A phase-0 V2 record can already have a closed curve. Stage classification reads readiness and reports `curve-closed-awaiting-sweep`; unknown/inconsistent phases reject rather than suggest a buy/sell route.
-- A V1 graduated flag does not imply pool migration. Inspection verifies the same canonical V3 pool and reports no required migration.
-- Snapshot reads use an explicit block number and check its header again before returning. Tests reject changed blocks, stale timestamps, changed factory code, duplicate registration, malformed ABI output and counterfeit pools.
+- Charge buy fees on actual native input consumed, within the total budget. Preserve donated balances and refund unused input. V3 partial fills unwrap the unspent wrapped currency before refund.
+- Check minimum output after protocol effects and service fees. Failed minimum checks roll back both swap and fee.
+- Sell pulls must arrive in full; taxed transferFrom, rebasing inconsistencies and residual input fail atomically. Approvals are exact, cleared after protocol use, and never unlimited. Nonzero insufficient user allowances require a zero reset. False-returning approval simulations are rejected.
+- Recheck stage during on-chain execution; unknown states, counterfeit venues, unsupported quote assets and unreviewed router bytecode fail closed. The API uses one block for quote reads and checks for a reorganization and a later stage change.
+- Protocol calls use fixed targets, reentrancy protection and pinned fee constants. PONS V4 callbacks require the expected manager and exact pending payload; callbacks cannot be replayed.
+- Public RPC has no signing/broadcast methods, client-supplied URL, key input or unbounded response. Provider messages are suppressed. HTTP bodies and edge request rates are bounded.
+- solc's vulnerable tmp dependency is overridden to 0.2.7. npm audit reports zero vulnerabilities.
 
-The read transport restricts methods to chain/header/code/view calls, bounds timeout and response size, rejects redirects and suppresses upstream details. HTTP accepts only a token; there is no remote RPC, key, signing or broadcast input. This is a loopback development server, not a production authentication/rate-limiting design.
+## Verification and limits
 
-## Verification
+42 automated tests passed locally, including EVM bytecode execution for fee/refund atomicity, rejected token transfers, reentrancy, failure rollback, wrong chain and allowance cleanup. API tests exercise each declared stage and direction using fixtures, plus deployment mismatches, stage races, block changes and HTTP/RPC failures. Existing PONS inspector tests remain in place. These mocks are not proof of protocol coverage.
 
-- 27 Node tests passed locally, covering market identity/stage failures, transport boundaries and HTTP request/concurrency limits.
-- Syntax/specification checks passed. `npm audit --audit-level=moderate` reported zero vulnerabilities in the installed dependency tree.
-- Read-only mainnet check at `2026-10-12T19:33:44.810Z`: chain 4663, block `86923456`, hash `0x39875aebd259a85857698cc39ac9e662204439993b4b0d4e574121edad17076a`; reference token `0x39dBED3a2bd333467115dE45665cC57F813C4571` matched the legacy factory and canonical V3 pool `0x10CC6BD38112cAc182db90B6a71d8Bb5939526bA`.
-- That single read took 1,465 ms locally; it is not a quote, transaction-build or confirmation benchmark. No live trade was simulated, signed or broadcast.
-- CI runs the offline suite on Node 22 and 24. Its result is available in GitHub Actions after push; local results alone do not establish CI completion.
+Read-only mainnet state-overlay round trips passed for: v2-bonding-curve, v1-uniswap-v3. Only our undeployed router/probe code and synthetic caller funding were overlaid; protocol storage was not changed. The evidence records exact hashes, blocks and measured outputs. No real funds, signatures or broadcasts were used.
 
-## Remaining work
-
-V2 tax/source reconciliation and live coverage remain open. Factory code hashes record an observed deployment, not proof that its public source matches. V2 pool identity, approvals, quote math, refunds, trade construction and atomic service fees are unimplemented. The owner authorized separate local fee/test wallet creation; keys stay outside this repository. A generated recipient does not remove any protocol or release prerequisites. Production hosting/capacity, performance verification and user-run funded trade tests remain outstanding.
+PONS V2 Uniswap V4 graduation is implemented but has not yet passed a live protocol simulation in this release. Some recent graduated samples used an unsupported ERC20 quote. Public Robinhood RPC also returned HTTP protection/rate errors during discovery. Funded tests and settlement deployment remain prerequisites for activating hosted trades. Dynamic protocol upgrades, taxes, RPC availability and execution-time market changes remain operating risks; simulation does not guarantee inclusion or success.

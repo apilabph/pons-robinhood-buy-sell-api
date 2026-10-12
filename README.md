@@ -1,68 +1,60 @@
-# PONS Buy and Sell API for Robinhood Chain
+# PONS Robinhood Chain Buy and Sell API
 
-Development project for an independent PONS trading integration. **The current version only inspects markets. It cannot buy, sell, quote, sign transactions or collect fees.** Robinhood Chain is a blockchain; this project does not connect to Robinhood brokerage accounts.
+Build buy and sell transactions for PONS Robinhood Chain with keys kept inside your bot. The API checks the token's current stage, simulates the trade, and sets a minimum net output. Independent integration; not an official launchpad product.
 
-The inspector recognizes registered PONS tokens, distinguishes V1 pools from V2 curve/graduation phases, and labels results with the block it read. It rejects changed factory code, inconsistent registrations and stale snapshots. This is useful groundwork for routing a trade; it does not establish that a token is safe or currently sellable.
+**0.2.0-beta: source and hosted documentation published; funded trading is pending.** The settlement contract has not been deployed. Market inspection works before setup. Quote/trade/approval endpoints return `SETUP_REQUIRED` until the operator deploys and configures the reviewed contract. No fees are being collected by this new service yet. This is separate from RapidAPI and the Pump API.
 
-Repository: [apilabph/pons-robinhood-buy-sell-api](https://github.com/apilabph/pons-robinhood-buy-sell-api). Development is private. Hosting: local development only. RapidAPI: none. This project is separate from the Pump APIs.
+[Hosted docs](https://pons-robinhood-trade.apilabph.workers.dev) · [OpenAPI](openapi.json) · [Release status](docs/RELEASE.md)
 
-## Try the inspector
+## Try market inspection now
 
-Use Node 22 or 24. No wallet, funding or customer API key is needed for these read-only requests.
-
-```sh
-npm ci --ignore-scripts
-npm test
-npm start
-```
-
-The server listens on `127.0.0.1:8788`. From another terminal:
-
-```sh
-curl -X POST http://127.0.0.1:8788/v1/market \
+```bash
+curl https://pons-robinhood-trade.apilabph.workers.dev/api/market \
   -H "Content-Type: application/json" \
-  -d '{"token":"0x39dBED3a2bd333467115dE45665cC57F813C4571"}'
+  -d '{"token":"TOKEN_ADDRESS"}'
 ```
 
-Or in PowerShell:
+Replace TOKEN_ADDRESS with a real ETH-paired launchpad token address. No API key is required. Public beta limits are six requests per minute per IP and twenty per minute per service at the edge; shared RPC/hosting limits also apply.
 
-```powershell
-Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8788/v1/market `
-  -ContentType 'application/json' `
-  -Body '{"token":"0x39dBED3a2bd333467115dE45665cC57F813C4571"}'
+## Buy after settlement setup
+
+```bash
+curl https://pons-robinhood-trade.apilabph.workers.dev/api/trade \
+  -H "Content-Type: application/json" \
+  -d '{"publicKey":"YOUR_PUBLIC_WALLET","token":"TOKEN_ADDRESS","action":"buy","amount":"0.01","slippageBps":100,"maxServiceFeeBps":25}'
 ```
 
-The reference token was observed as `v1-legacy`, with `stage: "uniswap-v3-pool"` and `tradingEnabled: false`. A V1 graduation threshold does not change its pool. V2 reports a different lifecycle:
+The wallet must have funds for the trade **and gas**. Buy amounts are decimal ETH strings. For a sell, set `action:"sell"` and supply a raw integer token amount. No private key belongs in any API request.
 
-| Stage | Meaning of this observation |
-| --- | --- |
-| `bonding-curve` | Factory phase 0; curve has not reported readiness to graduate |
-| `curve-closed-awaiting-sweep` | Still phase 0, but curve reports readiness; do not assume sells remain available |
-| `swept-awaiting-pool` | Phase 1; reserves swept and pool creation pending |
-| `pool-created` | Phase 2; factory reports a pool, but this inspector has not verified its V4 identity |
-| `rescued` | Phase 3; terminal rescue state, unsupported for trading |
+If a sell returns `APPROVAL_REQUIRED`, send the same body to `/api/approval`, inspect and sign that exact approval locally, wait for its receipt, then rebuild. A nonzero insufficient allowance is reset to zero first. Unlimited approvals are never requested.
 
-Every response is a snapshot. Another transaction can change the stage immediately afterward. V2 dynamic taxes, hooks, trade amounts and fee settlement remain unverified.
+The response contains an unsigned transaction, simulated output, fee, refund, stage, block snapshot and deadline. Your bot checks these, signs locally and submits through its own RPC. The API never signs, sends transactions or retries a failed trade automatically. See [local bot integration](examples/bot.mjs).
 
-`GET /health` reports process liveness. `GET /v1/capabilities` states exactly what exists. See [API specification](openapi.json) and [API details](docs/API.md).
+## Supported markets
 
-## Fees and wallets
+PONS V2 native-ETH bonding curves, PONS V1 WETH/Uniswap V3 pools and PONS V2 native-ETH/Uniswap V4 graduation pools. Closed curves, intermediate migration phases, rescued markets and ERC20 quote assets are rejected. This is Robinhood Chain, not a Robinhood brokerage API.
 
-The intended service fee is **0.25%**, subject to a verified atomic settlement design and an owner-controlled EVM public recipient. No fee is charged by this prototype. Protocol fees, taxes and gas are separate; the future API must disclose them and respect customer limits. The owner authorized separate local fee/test wallets; they have been generated and stored outside this repository. The fee address has not been activated in an execution route. An address alone does not activate trading.
+Tokens that charge a tax when transferred from your wallet to the settlement contract cannot be sold through this beta. Reverting, rebasing or nonstandard tokens can fail simulation. Protocol taxes, hook fees and restrictions are evaluated by the actual chain call; a quote is not a guarantee of future execution.
 
-Signing will happen inside each customer's bot. Never send this service a seed phrase or private key. No hosted signing or remote execution is implemented.
+## Fees and safeguards
 
-## Development and release status
+The service fee is **0.25% (25 basis points)**, sent atomically in ETH to `0x6A17d358ae138A726b4dda7A95C104440AAdb2DB`. Buy fees are 0.25% of native currency actually spent by the protocol, included within your total budget; unused input is refunded. Sell fees are deducted from the native proceeds received from the protocol before payout. Protocol fees/taxes and network gas are separate.
 
-```sh
+A failed swap reverts the service fee. Network gas can still be charged. API calls alone do not earn trading fees, and forks can remove this fee. The fee recipient and rate are compiled constants, not request parameters.
+
+The settlement contract verifies the stage again during execution. A changed stage reverts; rebuild instead of reusing a stale transaction. Absolute minimum output is checked against the buyer's received token balance or the seller's native payout **after** our fee. The API verifies exact deployed bytecode and fee constants before returning a trade.
+
+## Operator setup and development
+
+```bash
+npm ci --ignore-scripts
+npm run compile
 npm test
 npm run check
+npm run build:check
 npm audit --audit-level=moderate
-npm run verify:live
 ```
 
-The live script reads public chain state only; it does not simulate or submit a trade. `ROBINHOOD_RPC_URL` can select an operator-managed HTTPS endpoint through the environment. Never commit a credential-bearing URL or put it in command arguments. The default public RPC is not reserved production capacity.
+See [deployment](docs/DEPLOYMENT.md) for the one-time on-chain setup. User funding and live tests are deferred. Do not point SETTLEMENT_ROUTER at a token, wallet, proxy or unrelated router; a bytecode mismatch is rejected.
 
-Before a trading release: reconcile deployed V2 ABI/taxes with published source; validate the graduated pool/router; implement quotes, transaction construction, approvals and atomic fee settlement; simulate buys/sells and failures; add local execution/recovery; review and test; establish operating limits. Later, user-run funded tests must verify completed trades and actual fee receipts. None of those outcomes should be inferred from inspector tests.
-
-[Research and blockers](docs/RESEARCH.md) · [Review and verification](docs/REVIEW.md) · [Third-party notices](THIRD_PARTY_NOTICES.md)
+The reviewed Solidity artifact is reproducible with the pinned compiler. Keys stay in local wallets; never commit them or put them in shell arguments. Cloudflare and RPC quotas are shared. No paid hosting upgrade, uptime SLA, speed guarantee or independent security audit is claimed. Build latency and chain confirmation are separate measurements.

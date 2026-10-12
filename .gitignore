@@ -5,3 +5,8 @@ research/
 .trade-journal/
 coverage/
 *keypair*
+
+.dev.vars*
+.wrangler/
+artifacts/*.tmp
+*.local.*

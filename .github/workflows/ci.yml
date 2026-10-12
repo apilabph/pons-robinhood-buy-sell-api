@@ -1,14 +1,10 @@
-name: Verify read-only inspector
-on:
-  push:
-    branches: [main]
-  pull_request:
+name: Checks
+on: [push, pull_request]
 permissions:
   contents: read
 jobs:
-  verify:
+  checks:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
     strategy:
       matrix:
         node: [22, 24]
@@ -19,6 +15,9 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci --ignore-scripts
+      - run: npm run compile
+      - run: git diff --exit-code -- artifacts/TradeSettlement.json
       - run: npm test
       - run: npm run check
+      - run: npm run build:check
       - run: npm audit --audit-level=moderate

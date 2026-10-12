@@ -1,0 +1,15 @@
+name = "pons-robinhood-trade"
+main = "src/worker.js"
+compatibility_date = "2026-10-12"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+[[ratelimits]]
+name = "PUBLIC_RATE_LIMITER"
+namespace_id = "2026101313"
+simple = { limit = 6, period = 60 }
+
+[[ratelimits]]
+name = "PUBLIC_TOTAL_LIMITER"
+namespace_id = "2026101314"
+simple = { limit = 20, period = 60 }
