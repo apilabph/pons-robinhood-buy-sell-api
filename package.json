@@ -1,0 +1,16 @@
+{
+  "name": "pons-robinhood-buy-sell-api",
+  "version": "0.1.0-dev",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "Development of a locally signed PONS trading API for Robinhood Chain; current milestone is read-only market verification.",
+  "engines": {"node": ">=22"},
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/*.test.js",
+    "check": "node scripts/check.mjs",
+    "verify:live": "node scripts/verify-live.mjs"
+  },
+  "dependencies": {"viem": "2.57.4"}
+}

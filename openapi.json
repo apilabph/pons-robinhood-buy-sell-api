@@ -1,0 +1,95 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PONS Robinhood Chain Market Inspector",
+    "version": "0.1.0-dev",
+    "description": "Read-only development prototype. No quotes, unsigned trades, signing, broadcast or fee collection."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8788",
+      "description": "Local development only"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Process liveness only"
+          }
+        }
+      }
+    },
+    "/v1/capabilities": {
+      "get": {
+        "operationId": "capabilities",
+        "responses": {
+          "200": {
+            "description": "Implemented and disabled capabilities"
+          }
+        }
+      }
+    },
+    "/v1/market": {
+      "post": {
+        "operationId": "inspectMarket",
+        "description": "Observe factory registration and stage at one block. Does not establish tradeability or verify V2 taxes/pool identity.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "token"
+                ],
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-fA-F]{40}$",
+                    "description": "Nonzero token address, valid checksum or all lowercase."
+                  }
+                }
+              },
+              "example": {
+                "token": "0x39dBED3a2bd333467115dE45665cC57F813C4571"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Market observation with tradingEnabled false and block snapshot"
+          },
+          "400": {
+            "description": "Invalid JSON, address or unknown request fields"
+          },
+          "404": {
+            "description": "Unregistered token"
+          },
+          "413": {
+            "description": "Body exceeds 4096 bytes"
+          },
+          "415": {
+            "description": "Expected application/json"
+          },
+          "422": {
+            "description": "Unsupported V1 pair"
+          },
+          "429": {
+            "description": "Four inspections already active"
+          },
+          "500": {
+            "description": "Application failure"
+          },
+          "502": {
+            "description": "Upstream, identity, phase or snapshot validation failure"
+          }
+        }
+      }
+    }
+  }
+}
