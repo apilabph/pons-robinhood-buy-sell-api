@@ -1,0 +1,89 @@
+{
+  "checkedAt": "2026-10-13T13:06:18.623Z",
+  "scope": "Local Edge UI tests with mocked API responses. No signing, funded trading or deployment.",
+  "review": "Internal local website review; not an independent security audit or funded-trade verification.",
+  "siteTests": {
+    "passed": 7,
+    "failed": 0
+  },
+  "syntaxAndSpecification": "passed",
+  "browser": {
+    "api": "pons-robinhood-buy-sell-api",
+    "desktop": "1440x1000 passed",
+    "mobile": "390x844 passed",
+    "firstLoadExternalRequests": 0,
+    "successErrorGuidance": "mocked responses passed",
+    "codeTabs": "passed",
+    "tradeBroadcast": "disabled",
+    "pageErrors": []
+  },
+  "targetedRegressions": {
+    "api": "pons-robinhood-buy-sell-api",
+    "structure": {
+      "duplicateIds": [],
+      "missingAnchors": [],
+      "missingLabels": []
+    },
+    "keyboardSkipLinkAndFaq": "passed",
+    "rpcGuidance": "passed",
+    "emptyAmountCopyBlocked": "passed",
+    "previousResultCleared": "passed",
+    "delayedOldResponseDiscarded": "passed",
+    "unreadableAndNetworkErrors": "passed",
+    "copyFeedback": "passed",
+    "browserTradingDisabled": "passed",
+    "staticAssets": [
+      "style.css",
+      "app.js",
+      "request.js",
+      "config.js",
+      "favicon.svg",
+      "robots.txt",
+      "sitemap.xml"
+    ],
+    "noJavaScriptDocumentation": "passed",
+    "pageErrors": []
+  },
+  "contrastAndLayout": {
+    "api": "pons-robinhood-buy-sell-api",
+    "textSamples": 78,
+    "minimumTextRatio": 8.54,
+    "failures": [],
+    "inputBorderRatio": 4.79,
+    "placeholderRatio": 9.84,
+    "layout": [
+      {
+        "width": 320,
+        "overflow": false,
+        "headingVisible": true
+      },
+      {
+        "width": 390,
+        "overflow": false,
+        "headingVisible": true
+      },
+      {
+        "width": 760,
+        "overflow": false,
+        "headingVisible": true
+      },
+      {
+        "width": 768,
+        "overflow": false,
+        "headingVisible": true
+      },
+      {
+        "width": 1024,
+        "overflow": false,
+        "headingVisible": true
+      },
+      {
+        "width": 1440,
+        "overflow": false,
+        "headingVisible": true
+      }
+    ]
+  },
+  "visualReview": "Desktop and mobile screenshots inspected. PONS retains its dark theme.",
+  "deployment": "Redesigned websites remain local. Existing hosted APIs were not changed in this review."
+}

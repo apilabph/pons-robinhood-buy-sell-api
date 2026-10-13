@@ -55,6 +55,12 @@ test("playground preserves exact buy/sell units, fee cap and per-venue market fi
 test("playground rejects invalid units, fee-unrelated slippage changes and malformed public addresses", () => {
   for (const change of [
     { amount: "0" },
+    { amount: "" },
+    { amount: "   " },
+    { amount: undefined },
+    { amount: null },
+    { amount: 0 },
+    { action: "" },
     { amount: "1e-3" },
     { amount: "-1" },
     { amount: "101" },
@@ -157,6 +163,9 @@ test("preview rejects cross-origin, credential fields and excessive bodies befor
       const missingAmount = { ...req.body };
       delete missingAmount.amount;
       assert.equal((await send(missingAmount)).status, 400);
+      assert.equal((await send({ ...req.body, amount: "" })).status, 400);
+      assert.equal((await send({ ...req.body, amount: 0 })).status, 400);
+      assert.equal((await send({ ...req.body, action: "" })).status, 400);
       assert.equal(
         (await send(req.body, { Origin: "https://untrusted.example" })).status,
         403,

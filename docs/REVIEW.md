@@ -32,3 +32,9 @@ Reviewed API input/RPC boundaries, stage classification, route or settlement con
 - Bounded request uploads by time as well as bytes: three seconds and 4096 bytes, strict UTF-8 JSON, no compressed bodies. Stalled and chunked uploads, false Content-Length, invalid UTF-8 and unsupported encodings are tested before any RPC call. OpenAPI documents 408, 413 and 415 responses.
 
 Verification: 54 tests passed; syntax/OpenAPI checks, Worker dry-run build and npm audit passed with zero reported vulnerabilities. Recompilation reproduced the committed Solidity runtime artifact without bytecode changes. Funded trading was not tested. See the release record for the deployment/readback status of this patch.
+
+## Final local website review - October 13, 2026
+
+Fixed two request-state issues: empty/numeric-zero amounts and empty directions could silently fall back to sample values, and an earlier quote could remain visible after the inputs changed. Regression tests reproduced the old acceptance before the fix. Empty/invalid submitted values are rejected; old response JSON and timing are cleared on edits, and delayed results for older inputs are discarded. The browser cannot copy an empty-amount sample as a valid generated request.
+
+Added explicit operator-versus-customer RPC guidance to the quick start and FAQ. Clarified POSIX-shell cURL requirements and corrected the preview proxy description. All local website checks, syntax/specification checks, Edge interaction/error/keyboard tests, six viewport widths and sampled contrast checks passed. Reviewed desktop/mobile screenshots. See [local review evidence](evidence/website-final-local-review.json) for the scope and results. Existing funded-test and settlement-deployment limitations remain. This change does not deploy the redesigned websites or alter trading contracts.

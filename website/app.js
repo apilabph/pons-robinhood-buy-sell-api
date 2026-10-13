@@ -6,6 +6,7 @@ let language = "javascript";
 let previousAction = "buy";
 let request = null;
 let busy = false;
+let inputRevision = 0;
 const values = () => Object.fromEntries(new FormData(form));
 function update() {
   const mode = $("operation").value;
@@ -48,11 +49,27 @@ function update() {
     $("request-path").textContent = "POST " + request.path;
   } catch (error) {
     request = null;
+    $("request-path").textContent = "Complete the request fields";
     $("request-code").textContent = error.message;
   }
+  $("copy-code").disabled = !request;
 }
-form.addEventListener("input", update);
-form.addEventListener("change", update);
+function clearResult() {
+  $("result-json").hidden = true;
+  $("result-json").textContent = "";
+  $("response-timing").textContent = "";
+}
+function inputsChanged() {
+  inputRevision++;
+  clearResult();
+  $("copy-state").textContent = "";
+  feedback(busy
+    ? "Inputs changed. The earlier request is finishing; run again for these inputs."
+    : "Inputs changed. Run a new request to see its response.");
+  update();
+}
+form.addEventListener("input", inputsChanged);
+form.addEventListener("change", inputsChanged);
 document.querySelectorAll("[data-language]").forEach((button) =>
   button.addEventListener("click", () => {
     language = button.dataset.language;
@@ -100,6 +117,8 @@ async function jsonRequest(path, body) {
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (busy || $("operation").value === "trade") return;
+  const revision = inputRevision;
+  clearResult();
   let prepared;
   try {
     prepared = requestFor(values(), true);
@@ -114,6 +133,7 @@ form.addEventListener("submit", async (event) => {
   const started = performance.now();
   try {
     const { response, data } = await jsonRequest(prepared.path, prepared.body);
+    if (revision !== inputRevision) return;
     $("result-json").textContent = JSON.stringify(data, null, 2);
     $("result-json").hidden = false;
     $("response-timing").textContent =
@@ -143,6 +163,7 @@ form.addEventListener("submit", async (event) => {
       );
     }
   } catch (error) {
+    if (revision !== inputRevision) return;
     feedback(
       error.name === "TimeoutError"
         ? "The request timed out. Nothing was signed or sent. Wait before retrying."

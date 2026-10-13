@@ -14,7 +14,7 @@ npm run site:preview
 
 Open http://127.0.0.1:8815. Stop the server with Ctrl+C. The server binds only to 127.0.0.1. SITE_PORT can override the default port. Static files are in website/; no frontend dependency installation or build is needed.
 
-The playground uses a small local proxy because the production Solana APIs do not expose cross-origin browser access. Only capability reads, market inspection and quotes are allowed. The proxy pins the destination to https://pons-robinhood-trade.apilabph.workers.dev, validates request fields, rejects foreign Origin/Host headers and never forwards cookies or Authorization. It cannot proxy transaction builds, approvals, signing or broadcasts. Request contents are not persisted. Read-only calls still consume the hosted beta quota.
+The playground uses a small local proxy to keep browser requests on the same origin and restrict which hosted API operations it can call. Only capability reads, market inspection and quotes are allowed. The proxy pins the destination to https://pons-robinhood-trade.apilabph.workers.dev, validates request fields, rejects foreign Origin/Host headers and never forwards cookies or Authorization. It cannot proxy transaction builds, approvals, signing or broadcasts. Request contents are not persisted. Read-only calls still consume the hosted beta quota.
 
 ## What visitors get
 
@@ -36,7 +36,7 @@ Theme variables in `website/style.css` cover the page, navigation, controls, cod
 
 ## Checks and evidence
 
-Run `npm run site:check` for request-generation, public-address/amount validation, string escaping, read-only proxy, origin restrictions and credential-field rejection tests. These seven cases also run under `npm test`.
+Run `npm run site:check` for request-generation, public-address/amount validation, string escaping, read-only proxy, origin restrictions and credential-field rejection tests. These checks also run under `npm test`.
 
 All five local sites were checked in installed Microsoft Edge via Playwright at 1440×1000 and 390×844. Code tabs, operation changes, exact sell amounts, disabled browser trade submission, success/error guidance and FAQ interaction passed with no JavaScript errors or horizontal overflow. UI success/error cases use mocked responses; see docs/evidence/website-local-browser.json. Screenshots are in docs/evidence/website-desktop.png and website-mobile.png.
 
@@ -51,3 +51,9 @@ Keep this site in this API's repository. When the owner chooses its domain, upda
 The recommended deployment serves these assets and the existing API under the same Worker/custom domain. A separate static host needs a production-grade, bounded, same-origin read proxy or a reviewed CORS change. The local preview server is not a production server. The current Worker is not wired to this new website directory, so running wrangler deploy alone does not publish the redesign.
 
 Before publication: verify routing/CSP, mobile and keyboard behavior, links, public API requests and readiness copy. Recheck Search Console ownership and indexing after a domain exists. A sitemap does not guarantee indexing or ranking. API settlement setup and funded-trade verification remain separate requirements.
+
+## Final local review - October 13, 2026
+
+The quick start and FAQ now distinguish operator RPC reads/build simulation from the customer RPC used for local verification, submission and confirmation. RPC provider allowances remain separate from the service fee. No credentials are requested by the playground.
+
+Fixed empty/zero amounts and blank trade directions being replaced with defaults, and stale results remaining visible after request fields change. A delayed response for old inputs is discarded. Generated requests with a missing amount cannot be copied; cURL examples identify their POSIX-shell requirement. Regression coverage and browser evidence are recorded in docs/evidence/website-final-local-review.json. This review does not establish funded trading or deploy the redesigned website.

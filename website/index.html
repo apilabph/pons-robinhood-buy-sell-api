@@ -347,6 +347,7 @@ console.log(result);</code></pre>
         <div class="guide">
           <nav class="guide-nav" aria-label="Documentation sections">
             <a href="#before-start">Before you start</a
+            ><a href="#rpc">RPC &amp; signing</a
             ><a href="#amounts">Amount units</a
             ><a href="#read-response">Read a response</a
             ><a href="#execute">Sign &amp; confirm</a
@@ -359,7 +360,8 @@ console.log(result);</code></pre>
                 The hosted public beta needs <strong>no API key</strong>. Choose
                 an operation in the playground, paste a supported token’s public
                 address and use the generated code. JavaScript examples run in
-                Node 22 or 24; Python examples use the standard library.
+                Node 22 or 24; Python examples use the standard library. cURL
+                examples use Bash or a compatible POSIX shell.
               </p>
               <p>
                 Market inspection does not need a wallet. Quote, trade and
@@ -370,6 +372,25 @@ console.log(result);</code></pre>
                 Public beta limits: 6 requests per minute per IP and 20 per
                 minute per service at the edge. These limits are approximate per
                 edge location; provider and hosting limits also apply.
+              </p>
+            </article>
+            <article id="rpc">
+              <h3>Who provides the RPC?</h3>
+              <p>
+                <strong>Our API uses an operator-configured RPC</strong> to read
+                token and pool state, check the trading stage and simulate a
+                transaction build. These requests use our provider allowance.
+              </p>
+              <p>
+                <strong>Your bot uses your own RPC</strong> to verify the result,
+                submit the transaction after you sign locally and track confirmation.
+                Your wallet's private key stays in your bot or wallet. Do not
+                enter wallet secrets or RPC credentials in this playground.
+              </p>
+              <p>
+                You do not receive our RPC endpoint or provider key. Your RPC
+                provider's plan and limits are separate from the 0.25% service fee.
+                Local signing does not move the API's preparation work into your bot.
               </p>
             </article>
             <article id="amounts">
@@ -602,6 +623,15 @@ console.log(result);</code></pre>
               You do not need one for this hosted public beta. Self-hosting
               credentials described in the repository are operator settings.
               They are not keys issued to hosted users.
+            </p>
+          </details>
+          <details>
+            <summary>Do I need my own RPC?</summary>
+            <p>
+              Your bot needs an RPC connection to submit and track trades. The
+              hosted API uses its own provider for market reads and preparation.
+              You do not need to supply an RPC to try this read-only playground.
+              <a href="#rpc">See who handles each step.</a>
             </p>
           </details>
           <details>

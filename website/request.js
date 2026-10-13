@@ -29,12 +29,13 @@ export function requestFor(values, strict = false) {
   body.publicKey = getAddress("wallet", "YOUR_PUBLIC_WALLET");
   if (config.needsMarket)
     body.market = getAddress("market", "ORIGINAL_DBC_CURVE_ADDRESS");
-  body.action = values.action || "buy";
+  body.action = values.action ?? (strict ? undefined : "buy");
   if (!["buy", "sell"].includes(body.action))
     throw Error("Choose buy or sell.");
-  body.amount =
-    String(values.amount || "").trim() ||
-    (body.action === "buy" ? "0.01" : "1000000000");
+  const amount = String(values.amount ?? "").trim();
+  if (!amount && (strict || Object.hasOwn(values, "amount")))
+    throw Error("Enter an amount. Clearing the field does not select a default trade size.");
+  body.amount = amount || (body.action === "buy" ? "0.01" : "1000000000");
   const decimals = config.evm ? 18 : 9;
   const pattern =
     body.action === "buy"
