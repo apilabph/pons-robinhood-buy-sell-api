@@ -110,10 +110,33 @@ export async function executeTrade({
   if (BigInt(prepared.quote.minimumOut) < minimumAcceptableOut)
     throw new Error("Quote is below your own acceptable price");
   const hash = await walletClient.sendTransaction(prepared.transaction);
-  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  let receipt;
+  try {
+    receipt = await publicClient.waitForTransactionReceipt({ hash });
+  } catch {
+    throw Object.assign(
+      new Error(
+        "Transaction submitted; confirmation is unknown. Check its hash before retrying.",
+      ),
+      { hash, submitted: true },
+    );
+  }
+  // Viem can resolve with a successful cancellation/replacement receipt.
+  // Only the exact submitted transaction proves this requested trade was mined.
+  if (
+    typeof receipt?.transactionHash !== "string" ||
+    !same(receipt.transactionHash, hash)
+  )
+    throw Object.assign(
+      new Error(
+        "A different or unidentified transaction was confirmed. Check the original and replacement before retrying.",
+      ),
+      { hash, replacementHash: receipt?.transactionHash, submitted: true },
+    );
   if (receipt.status !== "success")
     throw Object.assign(new Error("Trade reverted; do not blindly resend"), {
       hash,
+      submitted: true,
     });
   return { hash, receipt, quote: prepared.quote };
 }

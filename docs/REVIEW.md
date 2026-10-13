@@ -23,3 +23,12 @@ PONS V2 Uniswap V4 graduation is implemented but has not yet passed a live proto
 ## Local website review — October 13, 2026
 
 Reviewed the separate website, generated request examples and loopback-only preview server. Fixed zero slippage being silently replaced with the default. Public inputs stay text in the DOM and generated JavaScript; POSIX cURL values are shell-quoted. Preview requests reject private/unknown fields, incomplete quote bodies, foreign origins/hosts, oversized inputs and every transaction/build/approval endpoint. Only pinned-origin reads are forwarded; credentials are not forwarded. Clarified quote versus simulation versus submission, request timing versus confirmation, and funded-trade readiness. Browser QA uses mocked UI cases; actual read-only checks are separate. No contract or trading behavior changed.
+
+## Follow-up review - October 13, 2026
+
+Reviewed API input/RPC boundaries, stage classification, route or settlement construction, fee handling, local integration examples and the developer website. This was an internal review, not an independent security audit.
+
+- Fixed false trade-success reporting in the local bot example. Viem can resolve receipt polling with a successful cancellation or replacement. The helper now requires the original submitted hash, preserves that hash on confirmation errors, includes a replacement hash when available, and never retries automatically. Gas-only replacements also require separate caller verification. Mocked tests cover success, cancellation, unknown receipt identity, revert and timeout; no live transaction was sent.
+- Bounded request uploads by time as well as bytes: three seconds and 4096 bytes, strict UTF-8 JSON, no compressed bodies. Stalled and chunked uploads, false Content-Length, invalid UTF-8 and unsupported encodings are tested before any RPC call. OpenAPI documents 408, 413 and 415 responses.
+
+Verification: 54 tests passed; syntax/OpenAPI checks, Worker dry-run build and npm audit passed with zero reported vulnerabilities. Recompilation reproduced the committed Solidity runtime artifact without bytecode changes. Funded trading was not tested. See the release record for the deployment/readback status of this patch.

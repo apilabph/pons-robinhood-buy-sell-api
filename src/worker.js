@@ -5,6 +5,7 @@ import { ApiError, requireThat, createReadRpc } from "./evm-rpc.js";
 import { build, address, snapshot, verifyRouter, read } from "./trading.js";
 import { inspect } from "./inspect.js";
 import { html } from "./site.js";
+import { bodyJson } from "./request.js";
 const headers = {
   "cache-control": "no-store",
   "x-content-type-options": "nosniff",
@@ -15,42 +16,6 @@ const json = (x, status = 200) =>
     status,
     headers: { ...headers, "content-type": "application/json; charset=utf-8" },
   });
-async function body(request) {
-  requireThat(
-    request.headers.get("content-type")?.split(";")[0].trim().toLowerCase() ===
-      "application/json",
-    "CONTENT_TYPE",
-    "Use application/json.",
-    415,
-  );
-  const reader = request.body?.getReader();
-  requireThat(reader, "INVALID_JSON", "JSON body is required.", 400);
-  let size = 0;
-  const chunks = [];
-  try {
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      size += value.length;
-      if (size > 4096) {
-        await reader.cancel();
-        throw new ApiError(
-          "BODY_TOO_LARGE",
-          "Request exceeds 4096 bytes.",
-          413,
-        );
-      }
-      chunks.push(value);
-    }
-  } finally {
-    reader.releaseLock();
-  }
-  try {
-    return JSON.parse(Buffer.concat(chunks).toString("utf8"));
-  } catch {
-    throw new ApiError("INVALID_JSON", "Use valid JSON.", 400);
-  }
-}
 export async function handle(request, env = {}, context = {}) {
   const started = Date.now(),
     requestId = crypto.randomUUID();
@@ -163,7 +128,7 @@ export async function handle(request, env = {}, context = {}) {
         429,
       );
     }
-    const data = await body(request),
+    const data = await bodyJson(request),
       rpc = context.rpc ?? createReadRpc(env.EVM_RPC_URL ?? config.rpc);
     let result;
     if (p === "/api/market") {

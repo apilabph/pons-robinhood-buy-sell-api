@@ -17,3 +17,11 @@ Hosted verification: [evidence](evidence/hosted-publication.json). Worker ce5c55
 ## Developer website — local review, October 13, 2026
 
 Added a separate, responsive developer website under website/. It is committed for local review, with no deployment or custom domain change. See [website guide](WEBSITE.md) for local startup, screenshots, tests and the production integration still needed. Existing on-chain readiness and funded-test limitations remain in force.
+
+## Follow-up review deployment - October 13, 2026
+
+Deployed the reviewed backend fixes as Worker version f5a8e595-38fb-4b0e-a7f5-b1cb4dbd3c0d. Existing runtime configuration was preserved. See [review findings](REVIEW.md#follow-up-review---october-13-2026) and [post-deployment readback](evidence/review-readback-20261013.json).
+
+Hosted readback confirmed the updated OpenAPI, invalid UTF-8 rejection and unsupported charset rejection. Trading still returns SETUP_REQUIRED because the settlement contract has not been deployed. Solidity bytecode was reproduced unchanged. Bot examples were verified with offline client mocks only.
+
+The redesigned website remains local-only. No domains, RPC subscriptions, wallet funding, swaps, bridges, contract deployments or live trades were purchased or executed. Funded tests and the remaining setup prerequisites still apply.

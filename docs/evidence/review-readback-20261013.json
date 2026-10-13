@@ -1,0 +1,49 @@
+{
+  "checkedAt": "2026-10-13T12:48:48.924Z",
+  "origin": "https://pons-robinhood-trade.apilabph.workers.dev",
+  "scope": "Read-only HTTP checks and unsigned simulation only; public historical holder samples, no signing/broadcast/funds moved",
+  "rows": [
+    {
+      "label": "health",
+      "status": 200,
+      "milliseconds": 85,
+      "check": "passed"
+    },
+    {
+      "label": "capabilities",
+      "status": 200,
+      "milliseconds": 12,
+      "settlementConfigured": false,
+      "tradingStatus": "setup-required",
+      "feeCollectionActive": false,
+      "check": "passed"
+    },
+    {
+      "label": "updated OpenAPI",
+      "status": 200,
+      "milliseconds": 9,
+      "check": "passed"
+    },
+    {
+      "label": "invalid UTF-8 blocked",
+      "status": 400,
+      "milliseconds": 24,
+      "error": "INVALID_JSON",
+      "check": "passed"
+    },
+    {
+      "label": "unsupported encoding blocked",
+      "status": 415,
+      "milliseconds": 35,
+      "error": "CONTENT_TYPE",
+      "check": "passed"
+    },
+    {
+      "label": "settlement still required",
+      "status": 503,
+      "milliseconds": 22,
+      "error": "SETUP_REQUIRED",
+      "check": "passed"
+    }
+  ]
+}

@@ -99,8 +99,17 @@
           "400": {
             "description": "Invalid input"
           },
+          "408": {
+            "description": "BODY_TIMEOUT: JSON upload did not finish within three seconds."
+          },
           "409": {
             "description": "Approval required or stage changed"
+          },
+          "413": {
+            "description": "BODY_TOO_LARGE: request exceeds 4096 bytes."
+          },
+          "415": {
+            "description": "Use uncompressed application/json with UTF-8."
           },
           "422": {
             "description": "Unsupported market, insufficient funds, or failed simulation"
@@ -187,8 +196,17 @@
           "400": {
             "description": "Invalid input"
           },
+          "408": {
+            "description": "BODY_TIMEOUT: JSON upload did not finish within three seconds."
+          },
           "409": {
             "description": "Approval required or stage changed"
+          },
+          "413": {
+            "description": "BODY_TOO_LARGE: request exceeds 4096 bytes."
+          },
+          "415": {
+            "description": "Use uncompressed application/json with UTF-8."
           },
           "422": {
             "description": "Unsupported market, insufficient funds, or failed simulation"
@@ -275,8 +293,17 @@
           "400": {
             "description": "Invalid input"
           },
+          "408": {
+            "description": "BODY_TIMEOUT: JSON upload did not finish within three seconds."
+          },
           "409": {
             "description": "Approval required or stage changed"
+          },
+          "413": {
+            "description": "BODY_TOO_LARGE: request exceeds 4096 bytes."
+          },
+          "415": {
+            "description": "Use uncompressed application/json with UTF-8."
           },
           "422": {
             "description": "Unsupported market, insufficient funds, or failed simulation"
@@ -363,8 +390,17 @@
           "400": {
             "description": "Invalid input"
           },
+          "408": {
+            "description": "BODY_TIMEOUT: JSON upload did not finish within three seconds."
+          },
           "409": {
             "description": "Approval required or stage changed"
+          },
+          "413": {
+            "description": "BODY_TOO_LARGE: request exceeds 4096 bytes."
+          },
+          "415": {
+            "description": "Use uncompressed application/json with UTF-8."
           },
           "422": {
             "description": "Unsupported market, insufficient funds, or failed simulation"

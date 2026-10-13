@@ -28,7 +28,7 @@ The wallet must have funds for the trade **and gas**. Buy amounts are decimal ET
 
 If a sell returns `APPROVAL_REQUIRED`, send the same body to `/api/approval`, inspect and sign that exact approval locally, wait for its receipt, then rebuild. A nonzero insufficient allowance is reset to zero first. Unlimited approvals are never requested.
 
-The response contains an unsigned transaction, simulated output, fee, refund, stage, block snapshot and deadline. Your bot checks these, signs locally and submits through its own RPC. The API never signs, sends transactions or retries a failed trade automatically. See [local bot integration](examples/bot.mjs): prepareTrade returns a transaction for your review; executeTrade uses your already configured local wallet client, checks your strategy minimum, submits once and waits for a receipt. It never asks the API to sign. If submission status is uncertain, inspect the transaction/nonce before retrying.
+The response contains an unsigned transaction, simulated output, fee, refund, stage, block snapshot and deadline. Your bot checks these, signs locally and submits through its own RPC. The API never signs, sends transactions or retries a failed trade automatically. See [local bot integration](examples/bot.mjs): prepareTrade returns a transaction for your review; executeTrade uses your already configured local wallet client, checks your strategy minimum, submits once and waits for a receipt. It never asks the API to sign. If submission status is uncertain, inspect the transaction/nonce before retrying. Confirmation errors retain the submitted hash in error.hash and set error.submitted to true. A replacement or cancellation receipt is not reported as a completed trade; error.replacementHash identifies it when available. Even gas-only replacements need separate verification by your bot.
 
 ## Supported markets
 
@@ -62,3 +62,5 @@ The reviewed Solidity artifact is reproducible with the pinned compiler. Keys st
 ## Separate developer website (local review)
 
 A redesigned website is ready for local review in [website/](website/README.md). Run `npm run site:preview`, then open http://127.0.0.1:8815. It includes a read-only playground, three-language examples, fees, coverage and troubleshooting. Local browser and automated checks are documented in [website verification](docs/WEBSITE.md). The redesign has not been deployed and no custom domain is configured.
+
+Requests must use uncompressed UTF-8 JSON, stay within 4096 bytes and finish uploading within three seconds. Incomplete uploads return HTTP 408; oversized bodies return 413; unsupported content types or encoding return 415. These limits apply before any chain reads.

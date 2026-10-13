@@ -295,7 +295,10 @@ test("local bot rejects modified fee calldata and enforces its own price before 
     };
     const publicClient = {
       getChainId: async () => config.chainId,
-      waitForTransactionReceipt: async () => ({ status: "success" }),
+      waitForTransactionReceipt: async ({ hash }) => ({
+        status: "success",
+        transactionHash: hash,
+      }),
     };
     await assert.rejects(
       () =>
@@ -316,6 +319,42 @@ test("local bot rejects modified fee calldata and enforces its own price before 
     });
     assert.equal(result.receipt.status, "success");
     assert.equal(submitted, 1);
+    for (const mode of ["timeout", "reverted", "cancelled", "missing-hash"]) {
+      const before = submitted;
+      publicClient.waitForTransactionReceipt = async ({ hash }) => {
+        if (mode === "timeout") throw new Error("Provider timed out");
+        return {
+          status: mode === "reverted" ? "reverted" : "success",
+          transactionHash:
+            mode === "missing-hash"
+              ? undefined
+              : mode === "cancelled"
+                ? "0x" + "cd".repeat(32)
+                : hash,
+        };
+      };
+      await assert.rejects(
+        () =>
+          executeTrade({
+            ...args,
+            walletClient,
+            publicClient,
+            minimumAcceptableOut: 990000n,
+          }),
+        (error) => {
+          assert.equal(error.hash, "0x" + "ab".repeat(32));
+          assert.equal(error.submitted, true);
+          if (mode === "cancelled")
+            assert.equal(error.replacementHash, "0x" + "cd".repeat(32));
+          return true;
+        },
+      );
+      assert.equal(
+        submitted,
+        before + 1,
+        "The helper must never resubmit after an uncertain outcome",
+      );
+    }
   } finally {
     globalThis.fetch = original;
   }
