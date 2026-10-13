@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PONS Robinhood Chain Buy and Sell API · APILabPH</title>
+    <meta
+      name="description"
+      content="Prepare for PONS trading on Robinhood Chain with current-stage checks, explicit fee limits and transactions signed inside your bot. Guided examples, supported markets and transparent 0.25% fees."
+    />
+    <meta name="theme-color" content="#0a0e14" />
+    <link
+      rel="canonical"
+      href="https://pons-robinhood-trade.apilabph.workers.dev/"
+    />
+    <meta property="og:title" content="PONS Robinhood Chain Buy and Sell API" />
+    <meta
+      property="og:description"
+      content="Prepare for PONS trading on Robinhood Chain with current-stage checks, explicit fee limits and transactions signed inside your bot."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://pons-robinhood-trade.apilabph.workers.dev/"
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/style.css" />
+    <script type="module" src="/app.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="topbar">
+      <div class="wrap nav">
+        <a class="brand" href="#main"
+          ><span class="mark" aria-hidden="true">↗</span
+          ><span>PONS<small>BY APILABPH</small></span></a
+        >
+        <nav class="navlinks" aria-label="Main navigation">
+          <a href="#playground">Playground</a><a href="#guides">Docs</a
+          ><a href="#fees">Pricing</a><a href="#help">Help</a
+          ><a
+            class="gh"
+            href="https://github.com/apilabph/pons-robinhood-buy-sell-api"
+            >GitHub ↗</a
+          >
+        </nav>
+      </div>
+    </header>
+    <main id="main" class="wrap">
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <div class="eyebrow">
+            <span class="dot"></span>Robinhood Chain · 4663 / Independent API
+          </div>
+          <h1 id="hero-title">
+            PONS integration.<br />Clear trade intent.<br /><span
+              >Your own signer.</span
+            >
+          </h1>
+          <p class="lead">
+            Prepare for PONS trading on Robinhood Chain with current-stage
+            checks, explicit fee limits and transactions signed inside your bot.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="#playground"
+              >Try the playground <span aria-hidden="true">↗</span></a
+            ><a class="button" href="#guides">Read the quick start</a>
+          </div>
+          <div class="hero-note tiny">
+            <span>No API key for the hosted beta</span
+            ><span>0.25% service fee</span>
+          </div>
+        </div>
+        <div class="editor">
+          <div class="editor-top">
+            <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span
+            ><span>first-request.mjs</span><span>JAVASCRIPT</span>
+          </div>
+          <pre><code><span class="comment">// Replace placeholders with public addresses.</span>
+const response = await fetch(
+  &quot;https://pons-robinhood-trade.apilabph.workers.dev/api/market&quot;,
+  {
+    method: &quot;POST&quot;,
+    headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+    body: JSON.stringify({
+      &quot;token&quot;: &quot;TOKEN_ADDRESS&quot;
+    }),
+  }
+);
+const result = await response.json();
+if (!response.ok) throw new Error(result.error?.message);
+console.log(result);</code></pre>
+          <div class="editor-foot">
+            <span class="comment">Read-only example · no trade sent</span
+            ><a href="#playground">Customize request →</a>
+          </div>
+        </div>
+      </section>
+      <div class="facts">
+        <div>
+          <strong>PONS V1 + V2</strong><span>Supported market scope below</span>
+        </div>
+        <div>
+          <strong>Local signing</strong><span>Keys stay inside your bot</span>
+        </div>
+        <div>
+          <strong>0.25%</strong><span>Service fee on successful swaps</span>
+        </div>
+        <div>
+          <strong>Open source</strong
+          ><span>Inspect the checks and examples</span>
+        </div>
+      </div>
+      <aside class="release" aria-label="Current release status">
+        <b>Setup pending</b>
+        <div>
+          <p>
+            Setup pending: the operator needs a reliable Robinhood Chain RPC and
+            settlement deployment. Public RPC has been intermittent; a
+            successful read does not establish reliable capacity. Funded trading
+            and fee collection are not active.
+          </p>
+          <button type="button" class="status-button" id="check-status">
+            Check current API capabilities
+          </button>
+          <p class="status-result" id="status-result" role="status">
+            Release notes distinguish simulations from funded trades.
+          </p>
+        </div>
+      </aside>
+      <section class="section" id="how">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">01 / The workflow</div>
+            <h2>One clear path to your trade.</h2>
+          </div>
+          <p>
+            The API prepares a transaction. Your bot stays in control of whether
+            to execute it.
+          </p>
+        </div>
+        <div class="flow">
+          <article>
+            <span class="step-no">01 — INSPECT</span>
+            <h3>Start with the right market.</h3>
+            <p>
+              Read the token stage and canonical market. Check whether that
+              route is covered before requesting a trade.
+            </p>
+          </article>
+          <article>
+            <span class="step-no">02 — PREPARE</span>
+            <h3>See what you will receive.</h3>
+            <p>
+              Build with a slippage limit and maximum service fee. Review
+              simulation, minimum output and any setup costs.
+            </p>
+          </article>
+          <article>
+            <span class="step-no">03 — SIGN LOCALLY</span>
+            <h3>Let your bot make the call.</h3>
+            <p>
+              Verify the transaction against your own trading rules. Sign
+              locally, send through your RPC and check the confirmed result.
+            </p>
+          </article>
+        </div>
+      </section>
+      <section class="section" id="playground">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">02 / Developer playground</div>
+            <h2>Your first request, explained.</h2>
+          </div>
+          <p>
+            Use public addresses to explore a response. Generate JavaScript,
+            Python or cURL for your own application.
+          </p>
+        </div>
+        <noscript
+          ><p class="noscript">
+            JavaScript is needed for the interactive playground. The quick start
+            and API reference below remain readable.
+          </p></noscript
+        >
+        <div class="workspace">
+          <form class="inputs" id="request-form">
+            <h3 class="input-head">Configure your request</h3>
+            <label class="field"
+              >Operation<select id="operation" name="operation">
+                <option value="market">Inspect a token · read only</option>
+                <option value="quote">Get a quote · no trade</option>
+                <option value="trade">Generate transaction-build code</option>
+              </select></label
+            ><label class="field"
+              >Token address<input
+                id="token"
+                name="token"
+                type="text"
+                autocomplete="off"
+                spellcheck="false"
+                maxlength="44"
+                placeholder="0x…"
+                required
+                aria-describedby="token-help"
+              /><small id="token-help"
+                >The token contract address on Robinhood Chain · 4663.</small
+              ></label
+            >
+            <div id="trade-fields">
+              <label class="field"
+                >Your public wallet address<input
+                  name="wallet"
+                  id="wallet"
+                  autocomplete="off"
+                  spellcheck="false"
+                  maxlength="44"
+                  placeholder="Public address only"
+                  required
+                /><small
+                  >Never enter a private key or recovery phrase.</small
+                ></label
+              >
+              <div class="fieldpair">
+                <label class="field"
+                  >Direction<select id="action" name="action">
+                    <option value="buy">Buy</option>
+                    <option value="sell">Sell</option>
+                  </select></label
+                ><label class="field"
+                  >Slippage (bps)<input
+                    id="slippage"
+                    name="slippage"
+                    type="number"
+                    min="1"
+                    max="1000"
+                    step="1"
+                    value="100"
+                    required
+                  /><small>100 bps = 1%.</small></label
+                >
+              </div>
+              <label class="field"
+                ><span id="amount-unit">ETH input</span
+                ><input
+                  id="amount"
+                  name="amount"
+                  inputmode="decimal"
+                  type="text"
+                  maxlength="39"
+                  value="0.01"
+                  required
+                  aria-describedby="amount-help"
+                /><small id="amount-help"
+                  >Leave extra native currency for network costs.</small
+                ></label
+              >
+            </div>
+            <p class="hint">
+              This is Robinhood Chain, chain ID 4663. It is not a Robinhood
+              brokerage integration. Gas and test funds must be on Robinhood
+              Chain.
+            </p>
+            <div class="actions">
+              <button class="button primary" id="run" type="submit">
+                Inspect token
+              </button>
+            </div>
+            <p id="run-note" class="tiny">
+              Only reads are submitted from this page.
+            </p>
+          </form>
+          <div class="workspace-right">
+            <div class="tabs" role="group" aria-label="Code language">
+              <button
+                type="button"
+                data-language="javascript"
+                aria-pressed="true"
+              >
+                JavaScript</button
+              ><button
+                type="button"
+                data-language="python"
+                aria-pressed="false"
+              >
+                Python</button
+              ><button type="button" data-language="curl" aria-pressed="false">
+                cURL
+              </button>
+            </div>
+            <pre
+              class="code-area"
+            ><code id="request-code">const response = await fetch(
+  &quot;https://pons-robinhood-trade.apilabph.workers.dev/api/market&quot;,
+  {
+    method: &quot;POST&quot;,
+    headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+    body: JSON.stringify({
+      &quot;token&quot;: &quot;TOKEN_ADDRESS&quot;
+    }),
+  }
+);
+const result = await response.json();
+if (!response.ok) throw new Error(result.error?.message);
+console.log(result);</code></pre>
+            <div class="code-actions">
+              <span class="docs-label" id="request-path">POST /api/market</span
+              ><span
+                ><button type="button" id="copy-code" class="copy">
+                  Copy code
+                </button>
+                <span id="copy-state" class="tiny" role="status"></span
+              ></span>
+            </div>
+            <div class="output">
+              <h3>Response &amp; next step</h3>
+              <p
+                id="feedback"
+                class="feedback"
+                role="status"
+                aria-live="polite"
+              >
+                Your response will appear here. The playground never connects to
+                a wallet, signs or sends a trade.
+              </p>
+              <p id="response-timing" class="tiny"></p>
+              <pre
+                id="result-json"
+                tabindex="0"
+                aria-label="API response JSON"
+                hidden
+              ></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="section" id="guides">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">03 / Quick start</div>
+            <h2>From first call to your own bot.</h2>
+          </div>
+          <p>
+            No signup step. Start with a read, learn the response, then
+            integrate local signing.
+          </p>
+        </div>
+        <div class="guide">
+          <nav class="guide-nav" aria-label="Documentation sections">
+            <a href="#before-start">Before you start</a
+            ><a href="#amounts">Amount units</a
+            ><a href="#read-response">Read a response</a
+            ><a href="#execute">Sign &amp; confirm</a
+            ><a href="#reference">API reference</a>
+          </nav>
+          <div class="guide-content">
+            <article id="before-start">
+              <h3>1. Make a read-only request</h3>
+              <p>
+                The hosted public beta needs <strong>no API key</strong>. Choose
+                an operation in the playground, paste a supported token’s public
+                address and use the generated code. JavaScript examples run in
+                Node 22 or 24; Python examples use the standard library.
+              </p>
+              <p>
+                Market inspection does not need a wallet. Quote, trade and
+                approval routes require operator settlement setup; quotes and
+                builds may need a funded trading wallet for simulation.
+              </p>
+              <p>
+                Public beta limits: 6 requests per minute per IP and 20 per
+                minute per service at the edge. These limits are approximate per
+                edge location; provider and hosting limits also apply.
+              </p>
+            </article>
+            <article id="amounts">
+              <h3>2. Get the units right</h3>
+              <p>
+                <strong>Buying:</strong> <code>"amount": "0.01"</code> means
+                0.01 ETH. <strong>Selling:</strong>
+                <code>"amount": "1000000"</code> means one million raw token
+                units. For a token with 6 decimals, that equals 1 displayed
+                token. Use strings to avoid floating-point rounding.
+              </p>
+              <p>
+                Set <code>slippageBps: 100</code> for a 1% tolerance and
+                <code>maxServiceFeeBps: 25</code> for a 0.25% fee cap. Slippage
+                is a price tolerance, not an additional fixed fee.
+              </p>
+            </article>
+            <article id="read-response">
+              <h3>3. Check the result before signing</h3>
+              <ul>
+                <li>
+                  stage and snapshot: where the token trades and which block was
+                  read.
+                </li>
+                <li>
+                  minimumOut: the minimum net output encoded into the
+                  transaction. Compare it with your own acceptable price.
+                </li>
+                <li>
+                  transaction: unsigned fields for your wallet to inspect. This
+                  API never signs or submits a trade.
+                </li>
+                <li>
+                  Review the simulated fee and refund. Gas, protocol charges and
+                  taxes are additional costs.
+                </li>
+              </ul>
+            </article>
+            <article id="execute">
+              <h3>4. Sign and confirm inside your bot</h3>
+              <p>
+                Use <code>POST /api/trade</code> with the same request body.
+                Inspect the returned transaction, wallet, token, amount, fee
+                recipient and minimum output. Check an independent price limit
+                before signing. Keep keys in your local signer; this website
+                never needs them.
+              </p>
+              <p>
+                For a sell requiring allowance, request
+                <code>/api/approval</code>, verify the exact spender and amount,
+                sign locally and wait for confirmation. A nonzero insufficient
+                allowance may need a zero-reset transaction first. Rebuild the
+                sell after the approval confirms.
+              </p>
+              <p>
+                The repository provides
+                <a
+                  class="link"
+                  href="https://github.com/apilabph/pons-robinhood-buy-sell-api/blob/main/examples/bot.mjs"
+                  >prepareTrade and executeTrade helpers</a
+                >. They verify the settlement identity and compare the quote
+                with your strategy minimum.
+              </p>
+              <p>
+                Wait for confirmation and check success before treating a buy or
+                sell as complete. A successful build or simulation cannot
+                guarantee later execution.
+              </p>
+            </article>
+            <article id="reference">
+              <h3>Endpoint reference</h3>
+              <div class="endpoint">
+                <code>POST /api/market</code
+                ><span
+                  >Read the current token stage and canonical market. No trade
+                  or wallet required.</span
+                >
+              </div>
+              <div class="endpoint">
+                <code>POST /api/quote</code
+                ><span
+                  >Simulate a quote. Settlement setup and a funded wallet are
+                  required.</span
+                >
+              </div>
+              <div class="endpoint">
+                <code>POST /api/trade</code
+                ><span
+                  >Build an unsigned transaction after simulation. Your bot
+                  signs and submits it separately.</span
+                >
+              </div>
+              <div class="endpoint">
+                <code>POST /api/approval</code
+                ><span
+                  >Prepare an exact sell allowance or a zero-reset approval when
+                  needed.</span
+                >
+              </div>
+              <div class="endpoint">
+                <code>GET /api/capabilities</code
+                ><span
+                  >Published capability and setup information. This does not
+                  execute a test trade.</span
+                >
+              </div>
+              <p>
+                <a
+                  class="link"
+                  href="https://pons-robinhood-trade.apilabph.workers.dev/openapi.json"
+                  >Download the complete OpenAPI specification →</a
+                >
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+      <section class="section" id="coverage">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">04 / Market coverage</div>
+            <h2>Know what this release covers.</h2>
+          </div>
+          <p>
+            Read-only state-overlay tests exercised legacy V1 and V2 curve
+            buy/sell roundtrips. No deployed settlement or funded trades. V2
+            native-ETH V4 mainnet verification is pending.
+          </p>
+        </div>
+        <div class="coverage">
+          <div>
+            <h3>Supported by the implementation</h3>
+            <ul>
+              <li>PONS V2 native-ETH bonding curves.</li>
+              <li>PONS V1 WETH / Uniswap V3 pools.</li>
+              <li>
+                V2 native-ETH / Uniswap V4 adapter is implemented; mainnet
+                simulation verification is pending.
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3>Outside this release</h3>
+            <ul>
+              <li>
+                ERC-20 quote assets, closed curves and intermediate migration
+                phases.
+              </li>
+              <li>Rescued markets and unknown factories.</li>
+              <li>
+                Sells taxed on transfer from your wallet into the settlement
+                contract.
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="key-points">
+          <a
+            href="https://github.com/apilabph/pons-robinhood-buy-sell-api/blob/main/docs/RELEASE.md"
+            >Release evidence ↗</a
+          ><a
+            href="https://github.com/apilabph/pons-robinhood-buy-sell-api/blob/main/docs/REVIEW.md"
+            >Internal code review ↗</a
+          ><span>No independent security audit or latency SLA.</span>
+        </div>
+      </section>
+      <section class="section" id="fees">
+        <div class="pricing">
+          <div>
+            <div class="eyebrow">05 / Pricing</div>
+            <h2>Pay when a swap succeeds.</h2>
+            <div class="price">0.25%</div>
+            <p>
+              Service fee per successful trade.<br />No hosted beta API-key
+              charge or monthly subscription.
+            </p>
+            <p>
+              A failed swap reverts the service fee. Network gas can still be
+              charged.
+            </p>
+          </div>
+          <div>
+            <div class="fees-row">
+              <strong>Buy</strong>
+              <p>
+                0.25% of native input actually spent by the protocol, included
+                within your total budget. Unused input is refunded.
+              </p>
+            </div>
+            <div class="fees-row">
+              <strong>Sell</strong>
+              <p>
+                0.25% of native proceeds received from the protocol, deducted
+                before your payout.
+              </p>
+            </div>
+            <div class="fees-row">
+              <strong>Other costs</strong>
+              <p>
+                Network gas, protocol fees and token taxes are separate.
+                Simulation measures the current trade; it cannot freeze future
+                conditions.
+              </p>
+            </div>
+            <p class="recipient tiny">
+              Public fee recipient · ETH<br /><code
+                >0x6A17d358ae138A726b4dda7A95C104440AAdb2DB</code
+              >
+            </p>
+          </div>
+        </div>
+      </section>
+      <section class="section faq" id="help">
+        <div>
+          <div class="eyebrow">06 / Help when you need it</div>
+          <h2>Less time guessing.<br />More time building.</h2>
+          <p class="lead">
+            Start here when a request doesn’t do what you expected.
+          </p>
+          <a
+            class="button"
+            href="https://github.com/apilabph/pons-robinhood-buy-sell-api/issues/new"
+            >Open a GitHub issue ↗</a
+          >
+        </div>
+        <div>
+          <details>
+            <summary>Where do I get an API key?</summary>
+            <p>
+              You do not need one for this hosted public beta. Self-hosting
+              credentials described in the repository are operator settings.
+              They are not keys issued to hosted users.
+            </p>
+          </details>
+          <details>
+            <summary>Did my API request buy or sell a token?</summary>
+            <p>
+              No. Inspection and quotes only read or simulate. A build returns
+              an unsigned transaction. A trade happens after your own bot signs,
+              submits and confirms it.
+            </p>
+          </details>
+          <details>
+            <summary>What does SETUP_REQUIRED mean?</summary>
+            <p>
+              The operator has not completed settlement deployment. It is not a
+              request to give us your private key, increase slippage or deposit
+              into a contract. Check release status before integrating
+              execution.
+            </p>
+          </details>
+          <details>
+            <summary>Why might a token fail after graduation?</summary>
+            <p>
+              A token may be migrating, its destination may be unsupported, or
+              its state may have changed after quoting. Request a fresh quote
+              and check coverage. Stage detection reduces stale-route mistakes;
+              it cannot guarantee success.
+            </p>
+          </details>
+          <details>
+            <summary>What should I do after a timeout or failed trade?</summary>
+            <p>
+              If you only requested a quote or build, nothing was broadcast by
+              this API. If your bot already submitted a signed trade, inspect
+              its transaction ID and chain status before retrying. A second
+              signed transaction can create a second trade.
+            </p>
+          </details>
+          <details>
+            <summary>How fast is it?</summary>
+            <p>
+              The playground measures the duration of your own request. API
+              build time and blockchain confirmation are different. We have not
+              established a production latency SLA or comparative speed
+              advantage.
+            </p>
+          </details>
+          <details>
+            <summary>How do I report a problem?</summary>
+            <p>
+              Include the API name, operation, error code, request ID,
+              approximate time and a redacted request. Never share private keys,
+              recovery phrases, provider credentials or signed transactions.
+              Support is through GitHub issues; no response-time SLA is offered.
+            </p>
+          </details>
+          <details>
+            <summary>Is this an official PONS service?</summary>
+            <p>
+              No. APILabPH builds independent integrations. This service targets
+              Robinhood Chain, not Robinhood brokerage accounts.
+            </p>
+          </details>
+        </div>
+      </section>
+      <section class="closing">
+        <div>
+          <h2>Start with one request.</h2>
+          <p>Understand the result before you automate the next step.</p>
+        </div>
+        <a class="button primary" href="#playground">Open the playground ↗</a>
+      </section>
+    </main>
+    <footer>
+      <div class="wrap footer-inner">
+        <div>APILabPH / PONS<br />Independent integration · Public beta</div>
+        <div class="footer-links">
+          <a href="https://github.com/apilabph/pons-robinhood-buy-sell-api"
+            >Source code</a
+          ><a
+            href="https://github.com/apilabph/pons-robinhood-buy-sell-api/blob/main/docs/RELEASE.md"
+            >Release notes</a
+          ><a
+            href="https://pons-robinhood-trade.apilabph.workers.dev/openapi.json"
+            >OpenAPI</a
+          ><a href="#help">Help</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

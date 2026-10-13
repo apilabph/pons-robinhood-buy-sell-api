@@ -14,7 +14,9 @@
     "check": "node scripts/check.mjs",
     "verify:live": "node scripts/verify-live.mjs",
     "compile": "node scripts/compile.mjs",
-    "build:check": "wrangler deploy --dry-run"
+    "build:check": "wrangler deploy --dry-run",
+    "site:preview": "node scripts/preview-site.mjs",
+    "site:check": "node --test test/site.test.js"
   },
   "dependencies": {
     "viem": "2.57.4"

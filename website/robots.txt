@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Sitemap: https://pons-robinhood-trade.apilabph.workers.dev/sitemap.xml

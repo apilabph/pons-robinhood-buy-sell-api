@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-10-13T05:39:09.558Z",
+  "browser": "Installed Microsoft Edge, Playwright",
+  "scope": "Local preview only. API responses mocked for UI cases. No signing or broadcast.",
+  "results": [
+    {
+      "api": "pons-robinhood-buy-sell-api",
+      "desktop": "1440x1000 passed",
+      "mobile": "390x844 passed",
+      "firstLoadExternalRequests": 0,
+      "successErrorGuidance": "mocked responses passed",
+      "codeTabs": "passed",
+      "tradeBroadcast": "disabled",
+      "pageErrors": []
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 Build buy and sell transactions for PONS Robinhood Chain with keys kept inside your bot. The API checks the token's current stage, simulates the trade, and sets a minimum net output. Independent integration; not an official launchpad product.
 
-**0.2.0-beta: source and hosted documentation published; funded trading is pending.** The settlement contract has not been deployed. Market inspection is implemented, but hosted reads currently return 503 because public RPC providers throttle Worker traffic. Configure a dedicated Robinhood Chain EVM_RPC_URL before launch; local public-RPC checks have succeeded. Quote/trade/approval endpoints return `SETUP_REQUIRED` until the operator deploys and configures the reviewed contract. No fees are being collected by this new service yet. This is separate from RapidAPI and the Pump API.
+**0.2.0-beta: source and hosted documentation published; funded trading is pending.** The settlement contract has not been deployed. Market inspection is implemented. Hosted public-RPC reads have returned both 503 rate-limit failures and successful results; the October 13 local website readback succeeded, but reliable production capacity is not established. Configure a dedicated Robinhood Chain EVM_RPC_URL before launch; local public-RPC checks have succeeded. Quote/trade/approval endpoints return `SETUP_REQUIRED` until the operator deploys and configures the reviewed contract. No fees are being collected by this new service yet. This is separate from RapidAPI and the Pump API.
 
 [Hosted docs](https://pons-robinhood-trade.apilabph.workers.dev) · [OpenAPI](openapi.json) · [Release status](docs/RELEASE.md)
 
@@ -58,3 +58,7 @@ npm audit --audit-level=moderate
 See [deployment](docs/DEPLOYMENT.md) for the one-time on-chain setup. User funding and live tests are deferred. Do not point SETTLEMENT_ROUTER at a token, wallet, proxy or unrelated router; a bytecode mismatch is rejected.
 
 The reviewed Solidity artifact is reproducible with the pinned compiler. Keys stay in local wallets; never commit them or put them in shell arguments. Cloudflare and RPC quotas are shared. No paid hosting upgrade, uptime SLA, speed guarantee or independent security audit is claimed. Build latency and chain confirmation are separate measurements.
+
+## Separate developer website (local review)
+
+A redesigned website is ready for local review in [website/](website/README.md). Run `npm run site:preview`, then open http://127.0.0.1:8815. It includes a read-only playground, three-language examples, fees, coverage and troubleshooting. Local browser and automated checks are documented in [website verification](docs/WEBSITE.md). The redesign has not been deployed and no custom domain is configured.

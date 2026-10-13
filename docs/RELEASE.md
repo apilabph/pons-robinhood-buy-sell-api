@@ -13,3 +13,7 @@ This beta is not earning fees yet. Quote/trade/approval return SETUP_REQUIRED un
 Read-only observations may become stale as tokens migrate. Re-run `node scripts/verify-overlay.mjs TOKEN_ADDRESS` to test a round trip against current chain state. The script's probe is never broadcast. A provider must support eth_call state overrides. Measurements in evidence are single RPC samples, not complete hosted build times or confirmation benchmarks.
 
 Hosted verification: [evidence](evidence/hosted-publication.json). Worker ce5c5585-7807-4ea9-9ab2-a54067c71ab0. Documentation, health, capabilities, deployment metadata, OpenAPI, robots and sitemap returned 200. All three trading endpoints correctly returned SETUP_REQUIRED. Hosted market inspection returned 503 RPC_HTTP; a dedicated Robinhood Chain RPC remains required. Local protocol simulations do not establish hosted readiness.
+
+## Developer website — local review, October 13, 2026
+
+Added a separate, responsive developer website under website/. It is committed for local review, with no deployment or custom domain change. See [website guide](WEBSITE.md) for local startup, screenshots, tests and the production integration still needed. Existing on-chain readiness and funded-test limitations remain in force.

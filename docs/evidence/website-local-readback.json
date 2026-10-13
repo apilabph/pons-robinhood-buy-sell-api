@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-10-13T05:32:34.688Z",
+  "mode": "read-only through local preview proxy",
+  "results": [
+    {
+      "api": "pons-robinhood",
+      "path": "/api/capabilities",
+      "status": 200,
+      "ms": 89,
+      "setup": false,
+      "rpcReadiness": "public-provider-rate-limited"
+    },
+    {
+      "api": "pons-robinhood",
+      "path": "/api/market",
+      "status": 200,
+      "ms": 670,
+      "stage": "uniswap-v3-pool"
+    }
+  ]
+}
