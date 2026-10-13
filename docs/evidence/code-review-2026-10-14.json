@@ -1,0 +1,58 @@
+{
+  "reviewDate": "2026-10-14",
+  "checkedAt": "2026-10-13T16:38:49.839Z",
+  "repository": "https://github.com/apilabph/pons-robinhood-buy-sell-api",
+  "baseCommit": "63bc6a43016db07b84f953444ac8d70ec11043f2",
+  "node": "v24.18.0",
+  "testCount": 61,
+  "results": [
+    {
+      "command": "npm run compile",
+      "exitCode": 0,
+      "durationMs": 19389,
+      "logSha256": "20e1294d6d15c03ddd9606d897c16c23f72936c1fae4b90ed682db2d05438772"
+    },
+    {
+      "command": "git diff --exit-code -- artifacts/TradeSettlement.json",
+      "exitCode": 0,
+      "durationMs": 208,
+      "logSha256": "6c5b6fe68a28f3122a5eeda3dea0626dc1a8ac6465638004924fb67015679874"
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "durationMs": 22798,
+      "logSha256": "1093f150110c4acef1dfd9e10f0ccc7d117800d89c593a5bbf514383e358a675"
+    },
+    {
+      "command": "npm run check",
+      "exitCode": 0,
+      "durationMs": 4083,
+      "logSha256": "b85202e1b6049f3c4ddbf9e7e009fabe22e581372289eff6aad9d758f4e1c081"
+    },
+    {
+      "command": "npm run build:check",
+      "exitCode": 0,
+      "durationMs": 5594,
+      "logSha256": "6d7e69bd544b1f80ba30989b28e9deee62561ed832c3cfb36b90f026cc72a112"
+    },
+    {
+      "command": "npm audit --audit-level=moderate",
+      "exitCode": 0,
+      "durationMs": 2163,
+      "logSha256": "6d8c5c8f3d7684adb070417bd608d01ae90aa3dc26a65af03ffda4955f38d9a3"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "durationMs": 121,
+      "logSha256": "54bf868ba3baccda2a389021553cf3f547ef842633ee542884b69a39e6e9fce1"
+    }
+  ],
+  "scope": "Internal source review and offline regression/contract-fixture checks. No live chain request, wallet access, transaction signing/broadcast, funded trade or Worker deployment.",
+  "compatibility": "Send failures or invalid hashes throw SUBMISSION_UNKNOWN with submissionAttempted:true and retrySafe:false. No persistent cross-call deduplication.",
+  "customerRpcOnly": true,
+  "rapidApiChanged": false,
+  "contractBytecodeChanged": false,
+  "fundedTradingVerified": false
+}

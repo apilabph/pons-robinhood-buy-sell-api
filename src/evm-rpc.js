@@ -58,7 +58,11 @@ export function createReadRpc(url, { fetchImpl = fetch, now = Date.now } = {}) {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ jsonrpc: "2.0", id: requestId, method, params }),
       });
-      requireThat(r.ok, "RPC_HTTP", "RPC read failed.", 503);
+      if (!r.ok) {
+        // Release the unread body on 429/503/redirect responses as well.
+        void r.body?.cancel().catch(() => {});
+        throw new ApiError("RPC_HTTP", "RPC read failed.", 503);
+      }
       const reader = r.body?.getReader();
       requireThat(reader, "RPC_RESPONSE", "RPC response is empty.");
       const chunks = [];

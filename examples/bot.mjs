@@ -112,7 +112,19 @@ export async function executeTrade({
   });
   if (BigInt(prepared.quote.minimumOut) < minimumAcceptableOut)
     throw new Error("Quote is below your own acceptable price");
-  const hash = await walletClient.sendTransaction(prepared.transaction);
+  let hash;
+  try {
+    hash = await walletClient.sendTransaction(prepared.transaction);
+    if (typeof hash !== "string" || !/^0x[0-9a-fA-F]{64}$/.test(hash))
+      throw new Error("Missing submission hash");
+  } catch {
+    // The RPC can accept a transaction and lose its reply. A rejection from
+    // sendTransaction is not proof that no transaction was broadcast.
+    throw Object.assign(
+      new Error("Submission outcome is unknown. Check your wallet's transaction history and nonce before another trade. Do not automatically retry."),
+      { code: "SUBMISSION_UNKNOWN", submissionAttempted: true, retrySafe: false },
+    );
+  }
   let receipt;
   try {
     receipt = await publicClient.waitForTransactionReceipt({ hash });

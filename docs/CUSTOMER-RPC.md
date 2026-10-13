@@ -69,6 +69,12 @@ Run `node --env-file=.dev.vars my-bot.mjs`. This direct import needs no local HT
 
 Your own signer signs the reviewed transaction. Your own RPC submits it and tracks the original signature/hash. The optional examples/bot.mjs helper uses the local API by default; give its rpcUrl and your local wallet/public clients the same customer endpoint. No automatic retry should create a second trade when the first confirmation is unknown.
 
+## If submission is uncertain
+
+The optional `executeTrade` example never automatically resends. If the send call throws or returns no valid transaction hash, it throws `SUBMISSION_UNKNOWN`, with `submissionAttempted: true` and `retrySafe: false`. There may be no hash to return: the node can accept a transaction and lose its reply. Pause that trading intent and reconcile your wallet's transaction history and nonce. Do not assume the trade failed because the request failed.
+
+After a valid hash is returned, confirmation errors retain `error.hash` and `error.submitted === true`. A successful replacement/cancellation receipt is not treated as success for the original trade. This helper has no persistent order journal or cross-call deduplication; calling it again is a new send attempt. Your bot must keep its own durable order/nonce tracking.
+
 ## Fees, operating limits and verification
 
 The 0.25% service fee and fixed recipient remain part of the reviewed transaction/settlement path. Stage detection, slippage limits and mandatory build simulation remain enabled. A fee is collected only when the fee-bearing swap succeeds on-chain. Open-source users can modify or bypass this integration; the library cannot force fees on unrelated or modified trades.

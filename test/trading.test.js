@@ -356,6 +356,29 @@ test("local bot rejects modified fee calldata and enforces its own price before 
         "The helper must never resubmit after an uncertain outcome",
       );
     }
+    const beforeUnknown = submitted;
+    walletClient.sendTransaction = async () => { submitted++; throw new Error('lost RPC acknowledgement: provider-secret-fixture'); };
+    await assert.rejects(() => executeTrade({...args,walletClient,publicClient,minimumAcceptableOut:990000n}), error => {
+      assert.equal(error.code, 'SUBMISSION_UNKNOWN');
+      assert.equal(error.submissionAttempted, true);
+      assert.equal(error.retrySafe, false);
+      assert.ok(!error.message.includes('provider-secret-fixture'));
+      return true;
+    });
+    assert.equal(submitted,beforeUnknown+1);
+    for (const invalidHash of [undefined, '0x1234', 'provider-secret-fixture']) {
+      const before = submitted;
+      walletClient.sendTransaction = async () => { submitted++; return invalidHash; };
+      await assert.rejects(() => executeTrade({...args,walletClient,publicClient,minimumAcceptableOut:990000n}), error => {
+        assert.equal(error.code, 'SUBMISSION_UNKNOWN');
+        assert.equal(error.submissionAttempted, true);
+        assert.equal(error.retrySafe, false);
+        assert.equal(error.hash, undefined);
+        assert.ok(!error.message.includes('provider-secret-fixture'));
+        return true;
+      });
+      assert.equal(submitted, before + 1);
+    }
   } finally {
     globalThis.fetch = original;
   }
@@ -377,4 +400,12 @@ test('customer RPC client verifies and builds supported stages using only the se
   assert.ok(f.calls.every(call=>!call.method.includes('send')));
   assert.ok(!JSON.stringify(result).includes('customer-fixture'));
  }
+});
+
+test('RPC HTTP failures release unread response bodies',async()=>{
+ let cancelled=false;
+ const rpc=createReadRpc('https://customer.invalid',{fetchImpl:async()=>new Response(new ReadableStream({cancel(){cancelled=true;}}),{status:429})});
+ await assert.rejects(()=>rpc('eth_chainId'),e=>e.code==='RPC_HTTP');
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(cancelled,true);
 });

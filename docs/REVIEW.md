@@ -1,5 +1,17 @@
 # Internal code review
 
+## Code review - October 14, 2026
+
+Reviewed input validation, customer RPC boundaries, local HTTP handling, account and market identities, routing/settlement, fee and slippage handling, signing examples, failure recovery, documentation and regression coverage. Existing contract sources were read; this patch changes no contract or deployed bytecode. This is internal code review, not an independent audit.
+
+- **Medium: ambiguous submission failures.** A node can accept a transaction before the send call loses its reply. The helper formerly propagated that raw exception. It now marks the outcome as SUBMISSION_UNKNOWN, submissionAttempted true and retrySafe false, suppresses provider details, and makes no second send. Missing/malformed hashes follow the same rule. Regressions cover lost acknowledgements, malformed hashes, exact send counts and secret redaction, in addition to existing receipt replacement/revert/timeout checks.
+- **Low: unread HTTP error responses.** The EVM read-only RPC client formerly threw on HTTP failure without cancelling the response body. It now cancels unread bodies on non-2xx responses, releasing the stream on rate limits and other errors. A streamed 429 regression reproduced the old failure and now passes.
+
+Validation results are recorded in [the local check evidence](evidence/code-review-2026-10-14.json). Regression tests exercise mocked transports and fixture accounts. Existing fee, stage, simulation, customer-only RPC and documentation-only host tests are included in the full suite.
+
+Update your clone with `git pull --ff-only`, run `npm ci --ignore-scripts`, and restart the local API/bot to use these changes. Customer processes do not update when a public documentation site is deployed. The public host's customer-RPC mode and website previews are unchanged. No Worker deployment, live trade, wallet operation, mainnet contract deployment or chain request was performed for this review. Funded verification remains outstanding; settlement deployment is still required. Prices, migrations and third-party upgrades can still invalidate a prepared transaction.
+
+
 ## Customer RPC migration — October 13, 2026
 
 The customer process now performs chain reads, transaction preparation and simulation through its explicit RPC. The hosted Worker defaults to documentation-only mode and returns HTTP 410 CUSTOMER_RPC_REQUIRED for former chain operations, even if old operator secrets remain. Local signing/submission stays with the bot. The fee rate/recipient and protocol validation are unchanged.
