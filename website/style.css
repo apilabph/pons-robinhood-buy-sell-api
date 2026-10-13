@@ -1,13 +1,28 @@
-﻿:root {
+:root {
   color-scheme: dark;
-  --bg: #0a0e14;
-  --panel: #101720;
-  --line: #27323f;
-  --text: #f1f5f7;
-  --muted: #b3bfcb;
-  --accent: #aab8ff;
-  --accent-ink: #0a1014;
-  --radius: 18px;
+  --bg: #080b08;
+  --panel: #121812;
+  --surface: #0b100b;
+  --line: #2d392c;
+  --text: #f3f7ef;
+  --muted: #afbea8;
+  --accent: #77ee80;
+  --secondary: #bdff9f;
+  --action: #00c805;
+  --accent-ink: #071005;
+  --topbar: #080b08f5;
+  --control-border: #6f856a;
+  --comment: #afbea8;
+  --tab-bg: #16301a;
+  --window-dot: #738075;
+  --notice-bg: #1b1b18;
+  --notice-text: #dbcfb5;
+  --notice-title: #f3d597;
+  --notice-border: #827049;
+  --error: #ffb8ac;
+  --success: #b5e9d2;
+  --radius: 22px;
+  --button-radius: 999px;
   font-family:
     Inter,
     ui-sans-serif,
@@ -69,8 +84,8 @@ button:disabled {
   position: absolute;
   left: 16px;
   top: -80px;
-  background: var(--accent);
-  color: #000;
+  background: var(--action);
+  color: var(--accent-ink);
   padding: 10px;
   z-index: 10;
 }
@@ -79,7 +94,7 @@ button:disabled {
 }
 .topbar {
   border-bottom: 1px solid var(--line);
-  background: #0a0e14f5;
+  background: var(--topbar);
   position: sticky;
   top: 0;
   z-index: 5;
@@ -201,7 +216,7 @@ button:disabled {
   gap: 10px;
   text-decoration: none;
   border: 1px solid var(--line);
-  border-radius: 9px;
+  border-radius: var(--button-radius);
   padding: 12px 19px;
   color: var(--text);
   background: transparent;
@@ -210,9 +225,9 @@ button:disabled {
   min-height: 46px;
 }
 .button.primary {
-  background: var(--accent);
+  background: var(--action);
   color: var(--accent-ink);
-  border-color: var(--accent);
+  border-color: var(--action);
 }
 .button:hover {
   filter: brightness(1.12);
@@ -229,9 +244,9 @@ button:disabled {
 .editor {
   border: 1px solid var(--line);
   border-radius: 14px;
-  background: #0e141d;
+  background: var(--panel);
   overflow: hidden;
-  box-shadow: 0 24px 75px #0003;
+  box-shadow: 0 18px 55px #0003;
   min-width: 0;
 }
 .editor-top {
@@ -255,7 +270,7 @@ button:disabled {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #4b5664;
+  background: var(--window-dot);
 }
 .editor pre {
   padding: 24px;
@@ -264,7 +279,7 @@ button:disabled {
   line-height: 1.95;
 }
 .comment {
-  color: #9aa9ba;
+  color: var(--comment);
 }
 .syntax {
   color: var(--accent);
@@ -317,15 +332,15 @@ code {
   gap: 16px;
   align-items: flex-start;
   font-size: 13px;
-  color: #dbcfb5;
-  background: #191a19;
-  border: 1px solid #3e392e;
+  color: var(--notice-text);
+  background: var(--notice-bg);
+  border: 1px solid var(--notice-border);
   border-radius: 10px;
   padding: 16px 20px;
 }
 .release b {
   white-space: nowrap;
-  color: #f3d597;
+  color: var(--notice-title);
 }
 .release p {
   margin: 0;
@@ -406,13 +421,17 @@ h3 {
 .field select {
   width: 100%;
   margin-top: 7px;
-  border: 1px solid #435262;
+  border: 1px solid var(--control-border);
   border-radius: 7px;
-  background: #0a1018;
+  background: var(--surface);
   color: var(--text);
   padding: 10px 12px;
   min-height: 44px;
   font-size: 13px;
+}
+.field input::placeholder {
+  color: var(--muted);
+  opacity: 1;
 }
 .field small {
   display: block;
@@ -449,7 +468,7 @@ h3 {
 }
 .tabs button[aria-pressed="true"] {
   color: var(--accent);
-  background: #ffffff09;
+  background: var(--tab-bg);
 }
 .code-area {
   padding: 24px;
@@ -482,7 +501,7 @@ h3 {
 .output pre {
   max-height: 320px;
   overflow: auto;
-  background: #0a1018;
+  background: var(--surface);
   padding: 14px;
   border-radius: 8px;
 }
@@ -492,17 +511,17 @@ h3 {
   margin: 10px 0;
 }
 .feedback.error {
-  color: #ffb8ac;
+  color: var(--error);
 }
 .feedback.success {
-  color: #b5e9d2;
+  color: var(--success);
 }
 .hint {
   font-size: 12px;
   line-height: 1.6;
   color: var(--muted);
   padding: 12px 14px;
-  background: #0a1018;
+  background: var(--surface);
   border-left: 2px solid var(--accent);
   border-radius: 0 6px 6px 0;
 }
@@ -590,10 +609,10 @@ h3 {
   font:
     10px ui-monospace,
     monospace;
-  border: 1px solid #545346;
+  border: 1px solid var(--notice-border);
   border-radius: 4px;
   padding: 3px 6px;
-  color: #ead296;
+  color: var(--notice-title);
   margin-left: 6px;
   white-space: nowrap;
 }
@@ -702,7 +721,7 @@ footer {
   display: none !important;
 }
 .noscript {
-  border: 1px solid #d0a75a;
+  border: 1px solid var(--notice-border);
   padding: 16px;
 }
 .key-points {
@@ -914,6 +933,28 @@ footer {
   }
 }
 
-:root {
-  --accent: #b0ded8;
+/* Visual reference: https://ponsfamily.com/launchpad. Independent APILabPH integration. */
+.brand,
+.hero h1,
+.section-head h2 {
+  font-family: ui-rounded, "Arial Rounded MT Bold", system-ui, sans-serif;
+}
+.mark,
+.navlinks .gh {
+  border-radius: 999px;
+}
+.mark {
+  background: var(--action);
+  color: var(--accent-ink);
+  border-color: var(--action);
+}
+.hero-action {
+  color: var(--accent);
+}
+.hero-product {
+  color: var(--text);
+}
+.editor {
+  border-radius: 22px;
+  border-top: 3px solid var(--action);
 }

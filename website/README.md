@@ -28,11 +28,19 @@ The playground uses a small local proxy because the production Solana APIs do no
 
 The browser never connects to a wallet. The trade option generates build code; it does not execute a build or trade. Current status and coverage text are explicit editorial content in website/index.html and website/config.js. Update them only after verifying the corresponding release.
 
+## Visual theme
+
+A dark canvas, green headings and bright green rounded actions, as requested by the owner. References: the green controls and rounded presentation of the [official PONS website](https://ponsfamily.com/launchpad), and the dark presentation of [Robinhood Chain](https://robinhood.com/chain), inspected in Edge on October 13, 2026. The palette is a design reference, not an affiliation claim. APILabPH keeps its own arrow mark, copy, examples and independent-integration identity.
+
+Theme variables in `website/style.css` cover the page, navigation, controls, code panels, notices and feedback. The browser theme color, favicon and config accent match. Light text and green links remain readable on the dark surfaces; filled green controls use dark text. System fonts keep the preview self-contained without external font requests.
+
 ## Checks and evidence
 
 Run `npm run site:check` for request-generation, public-address/amount validation, string escaping, read-only proxy, origin restrictions and credential-field rejection tests. These seven cases also run under `npm test`.
 
 All five local sites were checked in installed Microsoft Edge via Playwright at 1440×1000 and 390×844. Code tabs, operation changes, exact sell amounts, disabled browser trade submission, success/error guidance and FAQ interaction passed with no JavaScript errors or horizontal overflow. UI success/error cases use mocked responses; see docs/evidence/website-local-browser.json. Screenshots are in docs/evidence/website-desktop.png and website-mobile.png.
+
+The launchpad theme revision was also checked at widths 320, 390, 760, 768, 1024 and 1440 pixels. All kept the headline visible without horizontal overflow. Sampled text contrast was at least 8.54:1; the checked input border was 4.79:1 and placeholder text was 9.84:1. See docs/evidence/website-theme-review.json. These are targeted layout and contrast checks, not a complete accessibility audit.
 
 Actual read-only calls through the local proxy are recorded separately in website-local-readback.json. These do not prove a funded trade or reliable production capacity. No private keys were used.
 

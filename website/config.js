@@ -7,10 +7,10 @@ export const config = {
   native: "ETH",
   evm: true,
   pons: true,
-  accent: "#b0ded8",
+  accent: "#77ee80",
   port: 8815,
   fee: "0x6A17d358ae138A726b4dda7A95C104440AAdb2DB",
-  hero: "PONS integration.<br>Clear trade intent.<br><span>Your own signer.</span>",
+  hero: "Buy and Sell PONS API",
   lead: "Prepare for PONS trading on Robinhood Chain with current-stage checks, explicit fee limits and transactions signed inside your bot.",
   status:
     "Setup pending: the operator needs a reliable Robinhood Chain RPC and settlement deployment. Public RPC has been intermittent; a successful read does not establish reliable capacity. Funded trading and fee collection are not active.",
