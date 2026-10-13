@@ -1,0 +1,69 @@
+{
+  "checkedAt": "2026-10-13T15:52:37.898Z",
+  "host": "https://pons-robinhood-trade.apilabph.workers.dev",
+  "sourceCommit": "8eda349aee1029f2e0d872ed2fea351cfd82200e",
+  "workerVersion": "13db1a19-2958-47d5-8e74-c0b05c4381d0",
+  "checks": [
+    {
+      "method": "GET",
+      "path": "/",
+      "status": 200
+    },
+    {
+      "method": "HEAD",
+      "path": "/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/capabilities",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/openapi.json",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/quote",
+      "status": 410
+    },
+    {
+      "method": "POST",
+      "path": "/api/trade",
+      "status": 410
+    },
+    {
+      "method": "POST",
+      "path": "/api/trade/local",
+      "status": 410
+    },
+    {
+      "method": "POST",
+      "path": "/api/market",
+      "status": 410
+    },
+    {
+      "method": "POST",
+      "path": "/api/approval",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "path": "/api/deployment",
+      "status": 200
+    }
+  ],
+  "mode": "customer",
+  "htmlMatchesReviewedSource": true,
+  "serviceFeeBps": 25,
+  "fundedTrades": false,
+  "chainRequests": false,
+  "limitations": "Readback verifies documentation and retired endpoint behavior. Zero upstream requests is established separately by mocked transport tests and handler review, not measured provider billing. No funded execution is proven."
+}
