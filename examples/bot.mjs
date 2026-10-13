@@ -6,6 +6,7 @@ const same = (a, b) => a.toLowerCase() === b.toLowerCase();
 // Call this from your bot; signer/RPC credentials stay inside that bot.
 export async function prepareTrade({
   rpcUrl,
+  baseUrl = "http://127.0.0.1:8787",
   expectedRouter,
   publicKey,
   token,
@@ -15,7 +16,7 @@ export async function prepareTrade({
 }) {
   await verifyDeployment(rpcUrl, expectedRouter);
   const response = await fetch(
-    "https://" + config.host + ".apilabph.workers.dev/api/trade",
+    new URL("/api/trade", baseUrl),
     {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -82,6 +83,7 @@ export async function executeTrade({
   publicClient,
   expectedRouter,
   rpcUrl,
+  baseUrl = "http://127.0.0.1:8787",
   token,
   action,
   amount,
@@ -100,6 +102,7 @@ export async function executeTrade({
     throw new Error("Provide your strategy minimum in raw output units");
   const prepared = await prepareTrade({
     rpcUrl,
+    baseUrl,
     expectedRouter,
     publicKey: walletClient.account.address,
     token,

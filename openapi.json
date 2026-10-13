@@ -3,11 +3,12 @@
   "info": {
     "title": "PONS Robinhood Chain Buy and Sell API",
     "version": "0.2.0-beta",
-    "description": "PONS Robinhood Chain Buy and Sell API: unsigned transactions, stage checks, local signing and atomic 0.25% fees. Settlement deployment is required before trading."
+    "description": "Runs locally with the customer RPC for all chain reads and unsigned transaction preparation. Hosted chain endpoints have been retired with HTTP 410 CUSTOMER_RPC_REQUIRED. See docs/CUSTOMER-RPC.md. PONS Robinhood Chain Buy and Sell API: unsigned transactions, stage checks, local signing and atomic 0.25% fees. Settlement deployment is required before trading."
   },
   "servers": [
     {
-      "url": "https://pons-robinhood-trade.apilabph.workers.dev"
+      "url": "http://127.0.0.1:8787",
+      "description": "Customer-run local API; CUSTOMER_RPC_URL is required in its environment."
     }
   ],
   "paths": {
@@ -414,5 +415,6 @@
         }
       }
     }
-  }
+  },
+  "x-rpc-mode": "customer"
 }

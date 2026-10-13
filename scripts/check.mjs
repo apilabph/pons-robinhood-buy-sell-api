@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-for (const dir of ["src", "scripts", "examples", "test"]) {
+for (const dir of ["src", "scripts", "examples", "test", "client"]) {
   if (!fs.existsSync(dir)) continue;
   for (const f of fs.readdirSync(dir)) {
     if (/\.(js|mjs)$/.test(f)) {

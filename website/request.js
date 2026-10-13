@@ -88,7 +88,7 @@ export function requestFor(values, strict = false) {
 }
 
 export function codeFor(request, language) {
-  const url = config.api + request.path;
+  const url = "http://127.0.0.1:8787" + request.path;
   const body = JSON.stringify(request.body, null, 2);
   if (language === "curl") {
     const quote = (value) => "'" + value.replaceAll("'", "'\"'\"'") + "'";
@@ -121,13 +121,13 @@ export function explainError(code) {
     SETUP_REQUIRED:
       "The service operator still needs to deploy and configure the settlement contract. Changing your wallet or slippage will not fix this.",
     RPC_UNAVAILABLE:
-      "The upstream blockchain provider is unavailable or limiting requests. Wait before trying again. PONS currently needs a reliable provider configured by the operator.",
+      "The upstream blockchain provider is unavailable or limiting requests. Check your own RPC endpoint and provider allowance before retrying.",
     RPC_ERROR:
       "The blockchain read failed. Try again later; changing slippage is not a general fix.",
     RATE_LIMIT:
-      "Wait at least 60 seconds before making another request. The public beta has shared limits.",
+      "Respect your RPC provider’s retry guidance and reduce concurrent requests.",
     RATE_LIMITED:
-      "Wait at least 60 seconds before making another request. The public beta has shared limits.",
+      "Respect your RPC provider’s retry guidance and reduce concurrent requests.",
     MIGRATION_PENDING:
       "The token is moving to its next trading stage. Wait, then request a fresh quote. An old transaction may no longer match the market.",
     STAGE_CHANGED:

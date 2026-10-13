@@ -13,3 +13,6 @@ simple = { limit = 6, period = 60 }
 name = "PUBLIC_TOTAL_LIMITER"
 namespace_id = "2026101314"
 simple = { limit = 20, period = 60 }
+
+[vars]
+RPC_MODE = "customer"

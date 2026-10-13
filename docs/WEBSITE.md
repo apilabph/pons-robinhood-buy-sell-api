@@ -1,5 +1,7 @@
 # PONS developer website
 
+**Current customer RPC workflow:** the site generates code for the local API and only requests static capabilities. Its former hosted quote/inspection playground is retired. See [current review evidence](evidence/customer-rpc-local-review.json) and [setup](CUSTOMER-RPC.md). Historical browser records below describe earlier versions.
+
 The owner requested a separate website for each API and local verification before buying domains or deploying the redesigned sites. The website/ directory contains the reviewed local website source. The existing hosted API and its earlier documentation page remain deployed independently. No domain was purchased or connected.
 
 ## Preview locally

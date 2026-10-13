@@ -7,7 +7,8 @@ import {
   parseAbi,
   toHex,
 } from "viem";
-import { handle } from "../src/worker.js";
+import { handle as serverHandle } from "../src/worker.js";
+const handle = (request,env,context) => serverHandle(request,{RPC_MODE:"self-hosted",...env},context);
 import { input, build, erc20 } from "../src/trading.js";
 import { createReadRpc } from "../src/evm-rpc.js";
 import artifact from "../artifacts/TradeSettlement.json" with { type: "json" };
@@ -358,4 +359,22 @@ test("local bot rejects modified fee calldata and enforces its own price before 
   } finally {
     globalThis.fetch = original;
   }
+});
+
+test('customer RPC client verifies and builds supported stages using only the selected endpoint',async()=>{
+ const {createClient}=await import('../client/index.mjs');
+ for(const stageId of config.stages.keys())for(const action of ['buy','sell']){
+  const f=fixture({allowance:10n**20n,stageId}),seen=[];
+  const rpcUrl='https://customer-rpc.example/?key=customer-fixture';
+  const client=createClient({rpcUrl,settlementRouter:router,fetchImpl:async(url,options)=>{
+   assert.equal(url,rpcUrl);seen.push(url);
+   const {id,method,params}=JSON.parse(options.body);
+   return Response.json({jsonrpc:'2.0',id,result:await f.rpc(method,params)});
+  }});
+  const result=await client.buildTrade({...request,action,amount:action==='buy'?'0.01':'1000000000'});
+  assert.equal(result.unsigned,true);assert.equal(result.submitted,false);assert.equal(result.simulation.status,'passed');
+  assert.equal(result.transaction.to,router);assert.ok(seen.length>0);
+  assert.ok(f.calls.every(call=>!call.method.includes('send')));
+  assert.ok(!JSON.stringify(result).includes('customer-fixture'));
+ }
 });

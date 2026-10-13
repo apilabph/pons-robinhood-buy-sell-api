@@ -21,7 +21,8 @@ const allowed = new Set([
   "eth_getBalance",
 ]);
 export function createReadRpc(url, { fetchImpl = fetch, now = Date.now } = {}) {
-  const parsed = new URL(url);
+  let parsed;
+  try { parsed = new URL(url); } catch { throw new ApiError("RPC_CONFIG", "Provide your own HTTPS RPC URL.", 503); }
   requireThat(
     parsed.protocol === "https:" &&
       !parsed.username &&

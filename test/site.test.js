@@ -92,7 +92,7 @@ test("generated JavaScript keeps adversarial strings as data and sends exactly o
     AbortSignal,
     fetch: async (url, options) => {
       calls++;
-      assert.equal(url, config.api + "/api/quote");
+      assert.equal(url, "http://127.0.0.1:8787/api/quote");
       assert.deepEqual(JSON.parse(options.body), req.body);
       return { ok: true, json: async () => ({ ok: true }) };
     },
@@ -145,87 +145,30 @@ test("preview exposes only website assets and read-only API operations", async (
     },
   );
 });
-test("preview rejects cross-origin, credential fields and excessive bodies before upstream reads", async () => {
-  let calls = 0;
-  await preview(
-    async (base) => {
-      const req = requestFor(values, true);
-      const send = (body, headers = {}) =>
-        fetch(base + req.path, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", ...headers },
-          body: JSON.stringify(body),
-        });
-      assert.equal(
-        (await send({ ...req.body, privateKey: "never-forward-me" })).status,
-        400,
-      );
-      const missingAmount = { ...req.body };
-      delete missingAmount.amount;
-      assert.equal((await send(missingAmount)).status, 400);
-      assert.equal((await send({ ...req.body, amount: "" })).status, 400);
-      assert.equal((await send({ ...req.body, amount: 0 })).status, 400);
-      assert.equal((await send({ ...req.body, action: "" })).status, 400);
-      assert.equal(
-        (await send(req.body, { Origin: "https://untrusted.example" })).status,
-        403,
-      );
-      const hostStatus = await new Promise((resolve, reject) => {
-        const raw = http.request(
-          base + req.path,
-          {
-            method: "POST",
-            headers: {
-              Host: "untrusted.example",
-              "Content-Type": "application/json",
-            },
-          },
-          (res) => {
-            res.resume();
-            resolve(res.statusCode);
-          },
-        );
-        raw.on("error", reject);
-        raw.end(JSON.stringify(req.body));
-      });
-      assert.equal(hostStatus, 403);
-      assert.equal((await send({ token: "x".repeat(5000) })).status, 413);
-      assert.equal(calls, 0);
-    },
-    async () => {
-      calls++;
-      return new Response("{}");
-    },
-  );
+test("preview never proxies blockchain requests, even with valid public inputs", async () => {
+  let calls=0;
+  await preview(async base=>{
+    const req=requestFor(values,true);
+    for(const path of ['/api/market','/api/quote','/api/trade','/api/approval']) {
+      const res=await fetch(base+path,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(req.body)});
+      assert.equal(res.status,404);
+    }
+    const res=await fetch(base+'/api/capabilities',{headers:{origin:'https://foreign.invalid'}});
+    assert.equal(res.status,403);assert.equal(calls,0);
+  },async()=>{calls++;return Response.json({});});
 });
-test("preview forwards a validated read only to the pinned API with no user credentials", async () => {
-  let calls = 0;
-  const req = requestFor(values, true);
-  await preview(
-    async (base) => {
-      const result = await fetch(base + req.path, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer never-forward",
-          Cookie: "secret=value",
-        },
-        body: JSON.stringify(req.body),
-      });
-      assert.equal(result.status, 200);
-      assert.deepEqual(await result.json(), { stage: "test-fixture" });
-      assert.equal(calls, 1);
-    },
-    async (url, options) => {
-      calls++;
-      assert.equal(url, config.api + req.path);
-      assert.equal(options.redirect, "error");
-      assert.deepEqual(options.headers, { "Content-Type": "application/json" });
-      assert.deepEqual(JSON.parse(options.body), req.body);
-      return new Response('{"stage":"test-fixture"}');
-    },
-  );
+
+test("preview forwards only static capability metadata without user credentials", async () => {
+  let calls=0;
+  await preview(async base=>{
+    const res=await fetch(base+'/api/capabilities',{headers:{Authorization:'Bearer never-forward',Cookie:'secret=value'}});
+    assert.equal(res.status,200);assert.equal((await res.json()).rpcMode,'customer');assert.equal(calls,1);
+  },async(url,options)=>{
+    calls++;assert.equal(url,config.api+'/api/capabilities');assert.deepEqual(options.headers,{});
+    return Response.json({rpcMode:'customer'});
+  });
 });
+
 test("onboarding states beta limits, next steps, fees and empty live-test status honestly", async () => {
   const html = await fs.readFile(
     new URL("../website/index.html", import.meta.url),
@@ -233,7 +176,7 @@ test("onboarding states beta limits, next steps, fees and empty live-test status
   );
   assert.ok(html.includes(config.fee));
   assert.ok(html.includes("0.25%"));
-  assert.match(html, /No API key for the hosted beta/);
+  assert.match(html, /Your RPC/);
   assert.match(html, /funded/i);
   assert.match(html, /No independent security audit or latency SLA/);
   assert.match(explainError("SETUP_REQUIRED"), /operator/);

@@ -1,12 +1,10 @@
 ﻿import { config } from "./config.js";
-import { requestFor, codeFor, explainError } from "./request.js";
+import { requestFor, codeFor } from "./request.js";
 const $ = (id) => document.getElementById(id);
 const form = $("request-form");
 let language = "javascript";
 let previousAction = "buy";
 let request = null;
-let busy = false;
-let inputRevision = 0;
 const values = () => Object.fromEntries(new FormData(form));
 function update() {
   const mode = $("operation").value;
@@ -29,20 +27,9 @@ function update() {
       ? "Trade budget only. Leave extra for gas" +
         (config.evm ? "." : " and account rent.")
       : "Example: 1 token with 6 decimals = 1000000 raw units.";
-  $("run").disabled = busy || mode === "trade";
-  $("run").textContent = market
-    ? "Inspect token"
-    : mode === "trade"
-      ? "Build in your bot"
-      : "Request quote";
-  $("run-note").textContent =
-    mode === "trade"
-      ? "This playground generates build code only. Run it from your bot, then inspect and sign locally when ready."
-      : market
-        ? "Reads on-chain data. No wallet connection or trade."
-        : config.evm
-          ? "A quote needs settlement setup and a funded wallet for simulation. It does not submit a trade."
-          : "Quotes are estimates without simulation. A transaction build performs simulation separately.";
+  $("run").disabled = true;
+  $("run").textContent = "Run in your local API";
+  $("run-note").textContent = "Generate code here, then run it against your local API. All chain calls use your own RPC; this page sends none.";
   try {
     request = requestFor(values());
     $("request-code").textContent = codeFor(request, language);
@@ -60,12 +47,9 @@ function clearResult() {
   $("response-timing").textContent = "";
 }
 function inputsChanged() {
-  inputRevision++;
   clearResult();
   $("copy-state").textContent = "";
-  feedback(busy
-    ? "Inputs changed. The earlier request is finishing; run again for these inputs."
-    : "Inputs changed. Run a new request to see its response.");
+  feedback("Code updated. Run the request against your own local API.");
   update();
 }
 form.addEventListener("input", inputsChanged);
@@ -94,11 +78,9 @@ function feedback(message, kind = "") {
   $("feedback").textContent = message;
   $("feedback").className = "feedback " + kind;
 }
-async function jsonRequest(path, body) {
+async function jsonRequest(path) {
   const response = await fetch(path, {
-    method: body ? "POST" : "GET",
-    headers: body ? { "Content-Type": "application/json" } : {},
-    body: body ? JSON.stringify(body) : undefined,
+    method: "GET",
     signal: AbortSignal.timeout(30000),
     cache: "no-store",
     redirect: "error",
@@ -114,66 +96,9 @@ async function jsonRequest(path, body) {
   }
   return { response, data };
 }
-form.addEventListener("submit", async (event) => {
+form.addEventListener("submit", (event) => {
   event.preventDefault();
-  if (busy || $("operation").value === "trade") return;
-  const revision = inputRevision;
-  clearResult();
-  let prepared;
-  try {
-    prepared = requestFor(values(), true);
-  } catch (error) {
-    feedback(error.message, "error");
-    return;
-  }
-  busy = true;
-  update();
-  feedback("Reading the current chain state...");
-  $("result-json").hidden = true;
-  const started = performance.now();
-  try {
-    const { response, data } = await jsonRequest(prepared.path, prepared.body);
-    if (revision !== inputRevision) return;
-    $("result-json").textContent = JSON.stringify(data, null, 2);
-    $("result-json").hidden = false;
-    $("response-timing").textContent =
-      Math.round(performance.now() - started) +
-      " ms for this browser request. Not transaction confirmation time.";
-    if (!response.ok) {
-      const code = data.error?.code || "HTTP_" + response.status;
-      feedback(
-        code +
-          ": " +
-          (data.error?.message || "Request failed.") +
-          " " +
-          explainError(code),
-        "error",
-      );
-    } else {
-      const stage = data.stage || data.venue || "See response";
-      feedback(
-        prepared.path === "/api/market"
-          ? "Observed stage: " +
-              stage +
-              ". Market inspection does not prove a trade can execute."
-          : "Quote received for " +
-              stage +
-              ". Review output units, minimum output and fee fields. This is not a completed trade.",
-        "success",
-      );
-    }
-  } catch (error) {
-    if (revision !== inputRevision) return;
-    feedback(
-      error.name === "TimeoutError"
-        ? "The request timed out. Nothing was signed or sent. Wait before retrying."
-        : "Could not read the service: " + error.message,
-      "error",
-    );
-  } finally {
-    busy = false;
-    update();
-  }
+  feedback("Run the generated code against your own local API. This page makes no blockchain requests.");
 });
 $("check-status").addEventListener("click", async () => {
   $("check-status").disabled = true;
@@ -183,7 +108,9 @@ $("check-status").addEventListener("click", async () => {
     if (!response.ok)
       throw Error(data.error?.code || "HTTP " + response.status);
     const checked = new Date().toLocaleTimeString();
-    $("status-result").textContent = config.evm
+    $("status-result").textContent = data.rpcMode === "customer"
+      ? "Checked " + checked + ": customer RPC mode. Run chain requests locally; this host serves documentation only."
+      : config.evm
       ? "Checked " +
         checked +
         ": settlement " +

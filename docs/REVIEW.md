@@ -1,5 +1,14 @@
 # Internal code review
 
+## Customer RPC migration — October 13, 2026
+
+The customer process now performs chain reads, transaction preparation and simulation through its explicit RPC. The hosted Worker defaults to documentation-only mode and returns HTTP 410 CUSTOMER_RPC_REQUIRED for former chain operations, even if old operator secrets remain. Local signing/submission stays with the bot. The fee rate/recipient and protocol validation are unchanged.
+
+Review fixed implicit public-RPC fallback, stale hosted quickstarts, missing-RPC error handling and browser chain forwarding. 60 automated tests, syntax/specification checks, Worker dry-run and dependency audit passed. The local website passed Edge interaction, six-width layout and sampled contrast checks; it sends no chain requests. [Recorded local evidence](evidence/customer-rpc-local-review.json). No funded trade, settlement deployment or live chain request was performed for this migration.
+
+Customers must follow [the migration guide](CUSTOMER-RPC.md). EVM settlement and funded-trade requirements remain. Code-only website previews remain local. Deployment/readback evidence is recorded separately.
+
+
 October 13, 2026. Source, settlement contract, HTTP/RPC boundary, local examples, documentation and reproducible artifacts reviewed. A mocked local-client execution test rejects altered fee calldata and stops a quote below the bot?s own price limit before signing. This is an internal engineering review, not an independent smart-contract audit.
 
 ## Findings fixed

@@ -1,3 +1,4 @@
+import { customerRpcResponse } from './customer-rpc.js';
 import config from "./config.json" with { type: "json" };
 import artifact from "../artifacts/TradeSettlement.json" with { type: "json" };
 import spec from "../openapi.json" with { type: "json" };
@@ -17,6 +18,8 @@ const json = (x, status = 200) =>
     headers: { ...headers, "content-type": "application/json; charset=utf-8" },
   });
 export async function handle(request, env = {}, context = {}) {
+  const customerResponse = customerRpcResponse(request, env);
+  if (customerResponse) return customerResponse;
   const started = Date.now(),
     requestId = crypto.randomUUID();
   try {
@@ -129,7 +132,7 @@ export async function handle(request, env = {}, context = {}) {
       );
     }
     const data = await bodyJson(request),
-      rpc = context.rpc ?? createReadRpc(env.EVM_RPC_URL ?? config.rpc);
+      rpc = context.rpc ?? createReadRpc(env.EVM_RPC_URL);
     let result;
     if (p === "/api/market") {
       requireThat(

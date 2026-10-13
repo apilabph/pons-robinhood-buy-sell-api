@@ -13,7 +13,7 @@ export const config = {
   hero: "Buy and Sell PONS API",
   lead: "Prepare for PONS trading on Robinhood Chain with current-stage checks, explicit fee limits and transactions signed inside your bot.",
   status:
-    "Setup pending: the operator needs a reliable Robinhood Chain RPC and settlement deployment. Public RPC has been intermittent; a successful read does not establish reliable capacity. Funded trading and fee collection are not active.",
+    "Customer RPC required for local reads and builds. Settlement deployment and funded trading verification remain pending.",
   statusLabel: "Setup pending",
   stage: "PONS V1 + V2",
   coverage: [

@@ -1,25 +1,27 @@
 # PONS Robinhood Chain Buy and Sell API
 
+**Customer RPC mode:** run this API or import its client inside your own bot. All application blockchain RPC work uses your endpoint. Start with [the customer RPC guide](docs/CUSTOMER-RPC.md). The public site serves documentation; hosted trade/quote/market endpoints are retired in this release. Existing funded-test and settlement requirements remain.
+
 Build buy and sell transactions for PONS Robinhood Chain with keys kept inside your bot. The API checks the token's current stage, simulates the trade, and sets a minimum net output. Independent integration; not an official launchpad product.
 
-**0.2.0-beta: source and hosted documentation published; funded trading is pending.** The settlement contract has not been deployed. Market inspection is implemented. Hosted public-RPC reads have returned both 503 rate-limit failures and successful results; the October 13 local website readback succeeded, but reliable production capacity is not established. Configure a dedicated Robinhood Chain EVM_RPC_URL before launch; local public-RPC checks have succeeded. Quote/trade/approval endpoints return `SETUP_REQUIRED` until the operator deploys and configures the reviewed contract. No fees are being collected by this new service yet. This is separate from RapidAPI and the Pump API.
+**0.2.0-beta: source and hosted documentation published; funded trading is pending.** The settlement contract has not been deployed. Market inspection is implemented. Customers supply their own RPC. Local quote/trade/approval endpoints return `SETUP_REQUIRED` until the operator deploys and configures the reviewed contract. No fees are being collected by this new service yet. This is separate from RapidAPI and the Pump API.
 
 [Hosted docs](https://pons-robinhood-trade.apilabph.workers.dev) · [OpenAPI](openapi.json) · [Release status](docs/RELEASE.md)
 
 ## Try market inspection now
 
 ```bash
-curl https://pons-robinhood-trade.apilabph.workers.dev/api/market \
+curl http://127.0.0.1:8787/api/market \
   -H "Content-Type: application/json" \
   -d '{"token":"TOKEN_ADDRESS"}'
 ```
 
-Replace TOKEN_ADDRESS with a real ETH-paired launchpad token address. No API key is required. Public beta limits are six requests per minute per IP and twenty per minute per service at the edge; shared RPC/hosting limits also apply.
+Replace TOKEN_ADDRESS with a real ETH-paired launchpad token address. No API key is required. Run the [local API](docs/CUSTOMER-RPC.md) first. Your RPC provider sets its allowance; the local REST adapter permits two concurrent preparation requests.
 
 ## Buy after settlement setup
 
 ```bash
-curl https://pons-robinhood-trade.apilabph.workers.dev/api/trade \
+curl http://127.0.0.1:8787/api/trade \
   -H "Content-Type: application/json" \
   -d '{"publicKey":"YOUR_PUBLIC_WALLET","token":"TOKEN_ADDRESS","action":"buy","amount":"0.01","slippageBps":100,"maxServiceFeeBps":25}'
 ```
@@ -57,10 +59,10 @@ npm audit --audit-level=moderate
 
 See [deployment](docs/DEPLOYMENT.md) for the one-time on-chain setup. User funding and live tests are deferred. Do not point SETTLEMENT_ROUTER at a token, wallet, proxy or unrelated router; a bytecode mismatch is rejected.
 
-The reviewed Solidity artifact is reproducible with the pinned compiler. Keys stay in local wallets; never commit them or put them in shell arguments. Cloudflare and RPC quotas are shared. No paid hosting upgrade, uptime SLA, speed guarantee or independent security audit is claimed. Build latency and chain confirmation are separate measurements.
+The reviewed Solidity artifact is reproducible with the pinned compiler. Keys stay in local wallets; never commit them or put them in shell arguments. Customer RPC quotas apply; hosted documentation does not perform chain requests. No paid hosting upgrade, uptime SLA, speed guarantee or independent security audit is claimed. Build latency and chain confirmation are separate measurements.
 
 ## Separate developer website (local review)
 
-A redesigned website is ready for local review in [website/](website/README.md). Run `npm run site:preview`, then open http://127.0.0.1:8815. It includes a read-only playground, three-language examples, fees, coverage and troubleshooting. Local browser and automated checks are documented in [website verification](docs/WEBSITE.md). The redesign has not been deployed and no custom domain is configured.
+A redesigned website is ready for local review in [website/](website/README.md). Run `npm run site:preview`, then open http://127.0.0.1:8815. It includes a local request-code generator, three-language examples, fees, coverage and troubleshooting. Local browser and automated checks are documented in [website verification](docs/WEBSITE.md). The redesign has not been deployed and no custom domain is configured.
 
-Requests must use uncompressed UTF-8 JSON, stay within 4096 bytes and finish uploading within three seconds. Incomplete uploads return HTTP 408; oversized bodies return 413; unsupported content types or encoding return 415. These limits apply before any chain reads.
+Requests must use uncompressed UTF-8 JSON, stay within 8192 bytes and finish uploading within three seconds. Incomplete uploads return HTTP 408; oversized bodies return 413; unsupported content types or encoding return 415. These limits apply before any chain reads.

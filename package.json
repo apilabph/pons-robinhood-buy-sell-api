@@ -16,7 +16,8 @@
     "compile": "node scripts/compile.mjs",
     "build:check": "wrangler deploy --dry-run",
     "site:preview": "node scripts/preview-site.mjs",
-    "site:check": "node --test test/site.test.js"
+    "site:check": "node --test test/site.test.js",
+    "api:local": "node --env-file=.dev.vars client/server.mjs"
   },
   "dependencies": {
     "viem": "2.57.4"

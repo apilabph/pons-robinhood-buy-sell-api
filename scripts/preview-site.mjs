@@ -3,7 +3,6 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { config } from "../website/config.js";
-import { requestFor } from "../website/request.js";
 const siteRoot = fileURLToPath(new URL("../website/", import.meta.url));
 const types = {
   "/": ["index.html", "text/html; charset=utf-8"],
@@ -47,94 +46,22 @@ export function createPreviewServer({ fetcher = fetch } = {}) {
         return send(200, await fs.readFile(path.join(siteRoot, file)), type);
       }
       const allowed =
-        (req.method === "GET" && url.pathname === "/api/capabilities") ||
-        (req.method === "POST" &&
-          ["/api/quote", ...(config.evm ? ["/api/market"] : [])].includes(
-            url.pathname,
-          ));
+        req.method === "GET" && url.pathname === "/api/capabilities";
       if (!allowed || url.search)
         return send(
           404,
-          '{"error":{"code":"PREVIEW_READ_ONLY","message":"Local preview serves documentation, capabilities, market inspection and quotes only."}}',
+          '{"error":{"code":"PREVIEW_READ_ONLY","message":"Local preview serves documentation and static capabilities only."}}',
         );
       if (active >= 2)
         return send(
           429,
           '{"error":{"code":"RATE_LIMIT","message":"Wait for the current preview request to finish."}}',
         );
-      let body;
-      if (req.method === "POST") {
-        if (
-          !/^application\/json(?:;\s*charset=utf-8)?$/i.test(
-            req.headers["content-type"] || "",
-          )
-        )
-          return send(415, '{"error":{"code":"CONTENT_TYPE"}}');
-        let size = 0;
-        const chunks = [];
-        req.setTimeout(5000, () => req.destroy());
-        for await (const chunk of req) {
-          size += chunk.length;
-          if (size > 4096)
-            return send(413, '{"error":{"code":"BODY_TOO_LARGE"}}');
-          chunks.push(chunk);
-        }
-        let parsed;
-        try {
-          parsed = JSON.parse(Buffer.concat(chunks).toString("utf8"));
-          if (!parsed || typeof parsed !== "object" || Array.isArray(parsed))
-            throw Error();
-          const keys =
-            url.pathname === "/api/market"
-              ? ["token"]
-              : [
-                  config.evm ? "token" : "mint",
-                  "publicKey",
-                  ...(config.needsMarket ? ["market"] : []),
-                  "action",
-                  "amount",
-                  "slippageBps",
-                  "maxServiceFeeBps",
-                ];
-          if (Object.keys(parsed).some((k) => !keys.includes(k))) throw Error();
-          if (
-            url.pathname === "/api/quote" &&
-            (parsed.maxServiceFeeBps !== 25 ||
-              [
-                "publicKey",
-                "action",
-                "amount",
-                "slippageBps",
-                ...(config.needsMarket ? ["market"] : []),
-              ].some((k) => !Object.hasOwn(parsed, k)))
-          )
-            throw Error();
-          const normalized = requestFor(
-            {
-              operation: url.pathname.split("/").at(-1),
-              token: parsed.token || parsed.mint,
-              wallet: parsed.publicKey,
-              market: parsed.market,
-              action: parsed.action,
-              amount: parsed.amount,
-              slippage: parsed.slippageBps,
-            },
-            true,
-          );
-          body = JSON.stringify(normalized.body);
-        } catch {
-          return send(
-            400,
-            '{"error":{"code":"INVALID_REQUEST","message":"Use the playground fields and public addresses only."}}',
-          );
-        }
-      }
       active++;
       try {
         const upstream = await fetcher(config.api + url.pathname, {
           method: req.method,
-          headers: body ? { "Content-Type": "application/json" } : {},
-          body,
+          headers: {},
           redirect: "error",
           signal: AbortSignal.timeout(25000),
         });

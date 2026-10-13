@@ -1,0 +1,77 @@
+{
+  "checkedAt": "2026-10-13T15:44:50.194Z",
+  "mode": "customer",
+  "automatedTests": {
+    "passed": 60,
+    "failed": 0
+  },
+  "syntaxAndSpecification": "passed",
+  "workerDryRun": "passed",
+  "dependencyAudit": "0 vulnerabilities",
+  "routing": "All application chain calls use the explicitly supplied customer RPC. Solana route requests use Jupiter separately with customer credentials if required.",
+  "hostedNetworkTest": "zero calls with customer mode or missing mode, including legacy operator secrets",
+  "reviewFixes": [
+    "Removed implicit public RPC fallback",
+    "Returned an explicit configuration error instead of a generic error when legacy EVM RPC is missing",
+    "Updated bot and website examples to the local API",
+    "Hosted chain endpoints fail closed by default; static OpenAPI and root remain accessible",
+    "Removed browser chain-request proxying",
+    "Preserved fee, stage, simulation and unsigned-output checks"
+  ],
+  "fundedTrades": false,
+  "contractDeployments": false,
+  "liveChainRequestsDuringReview": false,
+  "limitations": "Fixture tests do not prove mainnet execution. EVM settlement remains undeployed. Solana routing needs supported Jupiter routes and customer access. Local REST is loopback only.",
+  "browser": {
+    "api": "pons-robinhood-buy-sell-api",
+    "generatedLanguages": 3,
+    "chainRequestsFromBrowser": 0,
+    "foreignRequests": 0,
+    "localEndpointOnly": true,
+    "submitDisabledWithAndWithoutJavaScript": true,
+    "emptyAmountRejected": true,
+    "status": "mocked customer metadata passed",
+    "mobileAndKeyboard": "passed",
+    "errors": []
+  },
+  "layout": {
+    "api": "pons-robinhood-buy-sell-api",
+    "textSamples": 77,
+    "minimumTextRatio": 8.54,
+    "failures": [],
+    "inputBorderRatio": 4.79,
+    "placeholderRatio": 9.84,
+    "layout": [
+      {
+        "width": 320,
+        "overflow": false,
+        "headingVisible": true
+      },
+      {
+        "width": 390,
+        "overflow": false,
+        "headingVisible": true
+      },
+      {
+        "width": 760,
+        "overflow": false,
+        "headingVisible": true
+      },
+      {
+        "width": 768,
+        "overflow": false,
+        "headingVisible": true
+      },
+      {
+        "width": 1024,
+        "overflow": false,
+        "headingVisible": true
+      },
+      {
+        "width": 1440,
+        "overflow": false,
+        "headingVisible": true
+      }
+    ]
+  }
+}

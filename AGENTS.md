@@ -10,3 +10,5 @@
 - Keep the repository private while developing the unverified adapter. No marketplace or public execution deployment exists yet.
 
 The owner subsequently authorized completing development and public GitHub/Worker publication on October 13, 2026. This supersedes the private-development milestone restriction above. Funded contract deployment and live trades are still deferred until the owner funds and tests the wallets.
+
+The owner requires customer-owned RPC for all application blockchain work. Customer mode runs reads/builds/simulations in the customer process; hosted chain endpoints must perform zero RPC calls. Require an explicit customer RPC with no implicit fallback. Keep the local signer and any routing credentials with the customer. Existing RapidAPI services are outside this migration.

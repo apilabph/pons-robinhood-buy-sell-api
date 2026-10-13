@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { bodyJson } from "../src/request.js";
-import { handle } from "../src/worker.js";
+import { handle as serverHandle } from "../src/worker.js";
+const handle = (request,env,context) => serverHandle(request,{RPC_MODE:"self-hosted",...env},context);
 
 const request = (body, headers = {}) =>
   new Request("https://api.invalid/api/market", {
