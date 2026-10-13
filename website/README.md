@@ -18,6 +18,7 @@ The playground uses a small local proxy because the production Solana APIs do no
 
 ## What visitors get
 
+- A prominent Buy and Sell headline, the API name directly below, and a matching header label on desktop and mobile.
 - A product-specific landing page, mobile layout and independent-integration identity.
 - Guided requests with JavaScript, Python and POSIX-shell cURL examples.
 - Correct amount-unit explanations, a fee ceiling and operation-specific requirements.

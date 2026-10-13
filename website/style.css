@@ -170,8 +170,17 @@ button:disabled {
   letter-spacing: -0.055em;
   margin: 22px 0;
 }
-.hero h1 span {
+.hero-action {
+  display: block;
   color: var(--accent);
+}
+.hero-product {
+  display: block;
+  margin-top: 12px;
+  color: var(--text);
+  font-size: clamp(28px, 3.1vw, 44px);
+  line-height: 1.15;
+  letter-spacing: -0.04em;
 }
 .lead {
   font-size: 18px;
