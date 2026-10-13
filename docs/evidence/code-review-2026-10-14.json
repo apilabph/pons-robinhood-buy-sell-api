@@ -49,7 +49,7 @@
       "logSha256": "54bf868ba3baccda2a389021553cf3f547ef842633ee542884b69a39e6e9fce1"
     }
   ],
-  "scope": "Internal source review and offline regression/contract-fixture checks. No live chain request, wallet access, transaction signing/broadcast, funded trade or Worker deployment.",
+  "scope": "Internal source review and offline regression/contract-fixture checks. No live chain request, access to user wallets, live transaction signing/broadcast, funded trade or Worker deployment. Tests may create signatures using synthetic fixture keys only.",
   "compatibility": "Send failures or invalid hashes throw SUBMISSION_UNKNOWN with submissionAttempted:true and retrySafe:false. No persistent cross-call deduplication.",
   "customerRpcOnly": true,
   "rapidApiChanged": false,
